@@ -1,10 +1,12 @@
 import { v4 as uuid } from 'uuid';
+import { CreateAlbumDto } from './albums/dto/create-album.dto';
+import { UpdateAlbumDto } from './albums/dto/update-album.dto';
 import { CreateArtistDto } from './artists/dto/create-artist.dto';
 import { UpdateArtistDto } from './artists/dto/update-artist.dto';
 import { CreateUserDto } from './users/dto/create-user.dto.ts';
 import { UpdateUserDto } from './users/dto/update-user.dto';
 
-export const DBUsers = {
+export const DB = {
   users: [
     {
       id: '4b9f6abb-eb3d-434d-b8d2-cd0b63c8e32f',
@@ -26,20 +28,36 @@ export const DBUsers = {
 
   artists: [
     {
-      id: '4b9f6abb-eb3d-434d-b8d2-cd0b63c8e32f',
+      id: '9310bca1-9110-4c75-b314-0a8b8dd1f39d',
       name: 'Avrile Lavigne',
       grammy: false,
     },
     {
-      id: '4b9f6abb-eb3d-434d-b8d2-cd0b63c8e92f',
+      id: '76c48802-5a4e-4393-89c8-84bcf1eab35c',
       name: 'Michael Jackson',
       grammy: true,
     },
   ],
 
+  albums: [
+    {
+      id: '3711e2b6-4f7c-446f-b005-e1479253a2f1',
+      name: 'Let Go',
+      year: 2002,
+      artistId: '9310bca1-9110-4c75-b314-0a8b8dd1f39d',
+    },
+    {
+      id: 'd09a382c-3695-4aac-9211-ce83a9947fea',
+      name: 'Thriller',
+      year: 1982,
+      artistId: '76c48802-5a4e-4393-89c8-84bcf1eab35c',
+    },
+  ],
+
   getAll: (what: string) => {
-    if (what === 'users') return DBUsers.users;
-    if (what === 'artists') return DBUsers.artists;
+    if (what === 'users') return DB.users;
+    if (what === 'artists') return DB.artists;
+    if (what === 'albums') return DB.albums;
   },
 
   createUser: (dto: CreateUserDto) => {
@@ -51,7 +69,7 @@ export const DBUsers = {
       updatedAt: Number(Date.now()),
     };
 
-    DBUsers.users.push(newUser);
+    DB.users.push(newUser);
     return newUser;
   },
 
@@ -61,21 +79,35 @@ export const DBUsers = {
       ...dto,
     };
 
-    DBUsers.artists.push(newArtist);
+    DB.artists.push(newArtist);
     return newArtist;
   },
 
+  createAlbum: (dto: CreateAlbumDto) => {
+    let { artistId } = dto;
+
+    let newAlbum = {
+      id: uuid(),
+      ...dto,
+      artistId: artistId ? artistId : null,
+    };
+
+    DB.albums.push(newAlbum);
+    return newAlbum;
+  },
+
   getById: (id: string, what: string) => {
-    if (what === 'users') return DBUsers.users.find((user) => user.id === id);
+    if (what === 'users') return DB.users.find((user) => user.id === id);
     if (what === 'artists')
-      return DBUsers.artists.find((artist) => artist.id === id);
+      return DB.artists.find((artist) => artist.id === id);
+    if (what === 'albums') return DB.albums.find((album) => album.id === id);
   },
 
   update: (id: string, dto: UpdateUserDto) => {
-    let foundIndex = DBUsers.users.findIndex((user) => user.id === id);
+    let foundIndex = DB.users.findIndex((user) => user.id === id);
     if (foundIndex === -1) return null;
 
-    let foundUser = DBUsers.users[foundIndex];
+    let foundUser = DB.users[foundIndex];
 
     let version = Number(foundUser.version);
     version += 1;
@@ -87,42 +119,57 @@ export const DBUsers = {
       updatedAt: Number(Date.now()),
     };
 
-    console.log('from db users');
-    console.log(foundUser);
-
-    DBUsers.users.splice(foundIndex, 1, foundUser);
+    DB.users.splice(foundIndex, 1, foundUser);
     return foundUser;
   },
 
   updateArtist: (id: string, dto: UpdateArtistDto) => {
-    let foundIndex = DBUsers.artists.findIndex((user) => user.id === id);
+    let foundIndex = DB.artists.findIndex((user) => user.id === id);
     if (foundIndex === -1) return null;
 
-    let foundArtist = DBUsers.artists[foundIndex];
+    let foundArtist = DB.artists[foundIndex];
 
     foundArtist = {
       ...foundArtist,
       ...dto,
     };
 
-    DBUsers.artists.splice(foundIndex, 1, foundArtist);
+    DB.artists.splice(foundIndex, 1, foundArtist);
     return foundArtist;
+  },
+
+  updateAlbum: (id: string, dto: UpdateAlbumDto) => {
+    let foundIndex = DB.albums.findIndex((user) => user.id === id);
+    if (foundIndex === -1) return null;
+
+    let foundAlbum = DB.albums[foundIndex];
+
+    foundAlbum = {
+      ...foundAlbum,
+      ...dto,
+    };
+
+    DB.albums.splice(foundIndex, 1, foundAlbum);
+    return foundAlbum;
   },
 
   delete: (id: string, what: string) => {
     let foundIndex: any;
 
     if (what === 'artists')
-      foundIndex = DBUsers.artists.findIndex((user) => user.id === id);
+      foundIndex = DB.artists.findIndex((user) => user.id === id);
     if (what === 'users')
-      foundIndex = DBUsers.users.findIndex((user) => user.id === id);
+      foundIndex = DB.users.findIndex((user) => user.id === id);
+    if (what === 'albums')
+      foundIndex = DB.albums.findIndex((album) => album.id === id);
 
     if (foundIndex === -1) {
       return false;
     }
 
-    if (what === 'artists') DBUsers.artists.splice(foundIndex, 1);
-    if (what === 'users') DBUsers.users.splice(foundIndex, 1);
+    if (what === 'artists') DB.artists.splice(foundIndex, 1);
+    if (what === 'users') DB.users.splice(foundIndex, 1);
+    if (what === 'albums') DB.albums.splice(foundIndex, 1);
     return true;
   },
 };

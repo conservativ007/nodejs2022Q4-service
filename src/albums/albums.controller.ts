@@ -10,18 +10,18 @@ import {
   Res,
   ValidationPipe,
 } from '@nestjs/common';
-import { ArtistsService } from './artists.service';
+import { AlbumsService } from './albums.service';
 import { Response } from 'express';
-import { CreateArtistDto } from './dto/create-artist.dto';
-import { UpdateArtistDto } from './dto/update-artist.dto';
+import { CreateAlbumDto } from './dto/create-album.dto';
+import { UpdateAlbumDto } from './dto/update-album.dto';
 
-@Controller('artist')
-export class ArtistsController {
-  constructor(private artistService: ArtistsService) {}
+@Controller('album')
+export class AlbumsController {
+  constructor(private albumsService: AlbumsService) {}
 
   @Get()
   getAllUsers() {
-    return this.artistService.getAll();
+    return this.albumsService.getAll();
   }
 
   @Get(':id')
@@ -29,7 +29,7 @@ export class ArtistsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    let artist = this.artistService.getById(id);
+    let artist = this.albumsService.getById(id);
     if (artist === undefined) {
       res.status(404);
       return;
@@ -39,23 +39,23 @@ export class ArtistsController {
   }
 
   @Post()
-  createUser(@Body(new ValidationPipe()) dto: CreateArtistDto) {
-    let user = this.artistService.create(dto);
+  createUser(@Body(new ValidationPipe()) dto: CreateAlbumDto) {
+    let user = this.albumsService.create(dto);
     return user;
   }
 
   @Put(':id')
   updateUser(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(new ValidationPipe()) dto: UpdateArtistDto,
+    @Body(new ValidationPipe()) dto: UpdateAlbumDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    let artist = this.artistService.update(id, dto);
-    if (artist === null) {
+    let album = this.albumsService.update(id, dto);
+    if (album === null) {
       res.status(404);
       return;
     }
-    return artist;
+    return album;
   }
 
   @Delete(':id')
@@ -63,8 +63,8 @@ export class ArtistsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    let isUserDeleted = this.artistService.artistDelete(id);
-    if (isUserDeleted === true) {
+    let isAlbumDeleted = this.albumsService.albumDelete(id);
+    if (isAlbumDeleted === true) {
       res.status(204);
       return;
     }

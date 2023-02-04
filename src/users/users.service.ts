@@ -1,27 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { DBUsers } from 'src/DB';
+import { DB } from 'src/DB';
 import { CreateUserDto } from './dto/create-user.dto.ts';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
   getAll() {
-    return DBUsers.getAll('users');
+    return DB.getAll('users');
   }
 
   create(dto: CreateUserDto) {
-    return DBUsers.createUser(dto);
+    return DB.createUser(dto);
   }
 
   getById(id: string) {
-    return DBUsers.getById(id, 'users');
+    return DB.getById(id, 'users');
   }
 
   update(id: string, dto: UpdateUserDto) {
-    return DBUsers.update(id, dto);
+    return DB.update(id, dto);
   }
 
   userDelete(id: string) {
-    return DBUsers.delete(id, 'users');
+    return DB.delete(id, 'users');
   }
 }
