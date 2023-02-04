@@ -3,6 +3,8 @@ import { CreateAlbumDto } from './albums/dto/create-album.dto';
 import { UpdateAlbumDto } from './albums/dto/update-album.dto';
 import { CreateArtistDto } from './artists/dto/create-artist.dto';
 import { UpdateArtistDto } from './artists/dto/update-artist.dto';
+import { CreateTrackDto } from './tracks/dto/create-track.dto';
+import { UpdateTrackDto } from './tracks/dto/update-track.dto';
 import { CreateUserDto } from './users/dto/create-user.dto.ts';
 import { UpdateUserDto } from './users/dto/update-user.dto';
 
@@ -54,10 +56,28 @@ export const DB = {
     },
   ],
 
+  tracks: [
+    {
+      id: '51c890c7-e424-480b-afe9-5ad12536a2dc',
+      name: 'Together',
+      artistId: '9310bca1-9110-4c75-b314-0a8b8dd1f39d',
+      albumId: '3711e2b6-4f7c-446f-b005-e1479253a2f1',
+      duration: 4,
+    },
+    {
+      id: '38f35876-e638-48c8-ad93-9e9542848677',
+      name: 'The Girl Is Mine',
+      artistId: '76c48802-5a4e-4393-89c8-84bcf1eab35c',
+      albumId: '76c48802-5a4e-4393-89c8-84bcf1eab35c',
+      duration: 4,
+    },
+  ],
+
   getAll: (what: string) => {
     if (what === 'users') return DB.users;
     if (what === 'artists') return DB.artists;
     if (what === 'albums') return DB.albums;
+    if (what === 'tracks') return DB.tracks;
   },
 
   createUser: (dto: CreateUserDto) => {
@@ -96,11 +116,26 @@ export const DB = {
     return newAlbum;
   },
 
+  createTrack: (dto: CreateTrackDto) => {
+    let { artistId, albumId } = dto;
+
+    let newTrack = {
+      id: uuid(),
+      ...dto,
+      artistId: artistId ? artistId : null,
+      albumId: albumId ? albumId : null,
+    };
+
+    DB.tracks.push(newTrack);
+    return newTrack;
+  },
+
   getById: (id: string, what: string) => {
     if (what === 'users') return DB.users.find((user) => user.id === id);
     if (what === 'artists')
       return DB.artists.find((artist) => artist.id === id);
     if (what === 'albums') return DB.albums.find((album) => album.id === id);
+    if (what === 'tracks') return DB.tracks.find((track) => track.id === id);
   },
 
   update: (id: string, dto: UpdateUserDto) => {
@@ -153,15 +188,32 @@ export const DB = {
     return foundAlbum;
   },
 
+  updateTrack: (id: string, dto: UpdateTrackDto) => {
+    let foundIndex = DB.tracks.findIndex((track) => track.id === id);
+    if (foundIndex === -1) return null;
+
+    let foundTrack = DB.tracks[foundIndex];
+
+    foundTrack = {
+      ...foundTrack,
+      ...dto,
+    };
+
+    DB.tracks.splice(foundIndex, 1, foundTrack);
+    return foundTrack;
+  },
+
   delete: (id: string, what: string) => {
     let foundIndex: any;
 
     if (what === 'artists')
-      foundIndex = DB.artists.findIndex((user) => user.id === id);
+      foundIndex = DB.artists.findIndex((artist) => artist.id === id);
     if (what === 'users')
       foundIndex = DB.users.findIndex((user) => user.id === id);
     if (what === 'albums')
       foundIndex = DB.albums.findIndex((album) => album.id === id);
+    if (what === 'tracks')
+      foundIndex = DB.tracks.findIndex((track) => track.id === id);
 
     if (foundIndex === -1) {
       return false;
@@ -170,6 +222,7 @@ export const DB = {
     if (what === 'artists') DB.artists.splice(foundIndex, 1);
     if (what === 'users') DB.users.splice(foundIndex, 1);
     if (what === 'albums') DB.albums.splice(foundIndex, 1);
+    if (what === 'tracks') DB.tracks.splice(foundIndex, 1);
     return true;
   },
 };
