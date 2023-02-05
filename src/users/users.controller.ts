@@ -18,7 +18,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
 import { Response } from 'express';
-import { UserValidationPipe } from '../validation/createUserValidationPipe';
+// import { UserValidationPipe } from '../validation/createUserValidationPipe';
 import { ValidationPipe } from '../validation/validation.pipe';
 import { UserEntity } from './entity/UserEntity';
 
@@ -46,7 +46,7 @@ export class UsersController {
     return new UserEntity(user);
   }
 
-  @UsePipes(UserValidationPipe)
+  // @UsePipes(UserValidationPipe)
   @Post()
   createUser(@Body() dto: CreateUserDto): UserEntity {
     let user = this.userService.create(dto);

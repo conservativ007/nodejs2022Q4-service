@@ -15,14 +15,10 @@ import { AlbumsService } from './albums.service';
 import { Response } from 'express';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { TracksService } from 'src/tracks/tracks.service';
 
 @Controller('album')
 export class AlbumsController {
-  constructor(
-    private albumsService: AlbumsService,
-    private tracksService: TracksService,
-  ) {}
+  constructor(private albumsService: AlbumsService) {}
 
   @Get()
   getAllAlbums() {
