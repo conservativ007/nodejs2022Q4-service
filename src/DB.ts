@@ -3,6 +3,9 @@ import { CreateAlbumDto } from './albums/dto/create-album.dto';
 import { UpdateAlbumDto } from './albums/dto/update-album.dto';
 import { CreateArtistDto } from './artists/dto/create-artist.dto';
 import { UpdateArtistDto } from './artists/dto/update-artist.dto';
+import { AddAlbumToFavoriteDto } from './favorites/dto/add-favs-album.dto';
+import { AddArtistToFavoriteDto } from './favorites/dto/add-favs-artist.dto';
+import { AddTrackToFavoriteDto } from './favorites/dto/create-favs-track.dto';
 import { CreateTrackDto } from './tracks/dto/create-track.dto';
 import { UpdateTrackDto } from './tracks/dto/update-track.dto';
 import { CreateUserDto } from './users/dto/create-user.dto.ts';
@@ -73,11 +76,102 @@ export const DB = {
     },
   ],
 
+  favorites: {
+    artists: [
+      {
+        id: '9310bca1-9110-4c75-b314-0a8b8dd1f39d',
+        name: 'Avrile Lavigne',
+        grammy: false,
+      },
+      {
+        id: '76c48802-5a4e-4393-89c8-84bcf1eab35c',
+        name: 'Michael Jackson',
+        grammy: true,
+      },
+    ],
+    albums: [
+      {
+        id: '3711e2b6-4f7c-446f-b005-e1479253a2f1',
+        name: 'Let Go',
+        year: 2002,
+        artistId: '9310bca1-9110-4c75-b314-0a8b8dd1f39d',
+      },
+      {
+        id: 'd09a382c-3695-4aac-9211-ce83a9947fea',
+        name: 'Thriller',
+        year: 1982,
+        artistId: '76c48802-5a4e-4393-89c8-84bcf1eab35c',
+      },
+    ],
+    tracks: [
+      {
+        id: '51c890c7-e424-480b-afe9-5ad12536a2dc',
+        name: 'Together',
+        artistId: '9310bca1-9110-4c75-b314-0a8b8dd1f39d',
+        albumId: '3711e2b6-4f7c-446f-b005-e1479253a2f1',
+        duration: 4,
+      },
+      {
+        id: '38f35876-e638-48c8-ad93-9e9542848677',
+        name: 'The Girl Is Mine',
+        artistId: '76c48802-5a4e-4393-89c8-84bcf1eab35c',
+        albumId: '76c48802-5a4e-4393-89c8-84bcf1eab35c',
+        duration: 4,
+      },
+    ],
+  },
+
+  // favorites add
+
+  addTrackToFavorites: (dto: AddTrackToFavoriteDto) => {
+    DB.favorites.tracks.push(dto);
+  },
+  addAlbumToFavorites: (dto: AddAlbumToFavoriteDto) => {
+    DB.favorites.albums.push(dto);
+  },
+  addArtistToFavorites: (dto: AddArtistToFavoriteDto) => {
+    DB.favorites.artists.push(dto);
+  },
+
+  // favorites delete
+
+  deleteTrackFromFavs: (id: string) => {
+    let foundIndex = DB.favorites.tracks.findIndex((track) => track.id === id);
+    if (foundIndex === -1) {
+      return undefined;
+      // this case is not processed
+    }
+    DB.favorites.tracks.splice(foundIndex, 1);
+    return true;
+  },
+
+  deleteArtistFromFavs: (id: string) => {
+    let foundIndex = DB.favorites.artists.findIndex(
+      (artist) => artist.id === id,
+    );
+    if (foundIndex === -1) {
+      return undefined;
+      // this case is not processed
+    }
+    DB.favorites.artists.splice(foundIndex, 1);
+    return true;
+  },
+  deleteAlbumFromFavs: (id: string) => {
+    let foundIndex = DB.favorites.albums.findIndex((album) => album.id === id);
+    if (foundIndex === -1) {
+      return undefined;
+      // this case is not processed
+    }
+    DB.favorites.albums.splice(foundIndex, 1);
+    return true;
+  },
+
   getAll: (what: string) => {
     if (what === 'users') return DB.users;
     if (what === 'artists') return DB.artists;
     if (what === 'albums') return DB.albums;
     if (what === 'tracks') return DB.tracks;
+    if (what === 'favorites') return DB.favorites;
   },
 
   createUser: (dto: CreateUserDto) => {
@@ -221,7 +315,14 @@ export const DB = {
 
     if (what === 'artists') DB.artists.splice(foundIndex, 1);
     if (what === 'users') DB.users.splice(foundIndex, 1);
-    if (what === 'albums') DB.albums.splice(foundIndex, 1);
+    if (what === 'albums') {
+      // let albumId = DB.albums[foundIndex].id;
+
+      // console.log('this album will be deleted');
+      // console.log(DB.albums[foundIndex]);
+
+      DB.albums.splice(foundIndex, 1);
+    }
     if (what === 'tracks') DB.tracks.splice(foundIndex, 1);
     return true;
   },
