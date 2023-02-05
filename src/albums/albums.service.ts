@@ -1,5 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { DB } from 'src/DB/DB';
+import { DBFavorites } from 'src/DB/DBFavorites';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 
@@ -34,5 +35,14 @@ export class AlbumsService {
     // in this place we'll delete albumId from track if it's exists
     track.albumId = null;
     DB.updateTrack(track.id, track);
+
+    // in this place we'll delete artist from favorites artists if it's exists
+    let foundIndex = DBFavorites.favorites.albums.findIndex(
+      (album) => album.id === id,
+    );
+
+    if (foundIndex !== -1) {
+      DBFavorites.favorites.albums.splice(foundIndex, 1);
+    }
   }
 }

@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   ParseUUIDPipe,
   Post,
@@ -58,16 +59,9 @@ export class TracksController {
     return track;
   }
 
+  @HttpCode(204)
   @Delete(':id')
-  deleteTrack(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    let isTrackDeted = this.trackService.trackDelete(id);
-    if (isTrackDeted === true) {
-      res.status(204);
-      return;
-    }
-    res.status(404);
+  deleteTrack(@Param('id', ParseUUIDPipe) id: string) {
+    this.trackService.trackDelete(id);
   }
 }

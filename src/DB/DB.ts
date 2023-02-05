@@ -1,3 +1,4 @@
+import { UpdateUserPasswordDto } from 'src/users/dto/update-user-password.dto';
 import { v4 as uuid } from 'uuid';
 import { CreateAlbumDto } from '../albums/dto/create-album.dto';
 import { UpdateAlbumDto } from '../albums/dto/update-album.dto';
@@ -6,7 +7,6 @@ import { UpdateArtistDto } from '../artists/dto/update-artist.dto';
 import { CreateTrackDto } from '../tracks/dto/create-track.dto';
 import { UpdateTrackDto } from '../tracks/dto/update-track.dto';
 import { CreateUserDto } from '../users/dto/create-user.dto.ts';
-import { UpdateUserDto } from '../users/dto/update-user.dto';
 
 export const DB = {
   users: [
@@ -138,24 +138,17 @@ export const DB = {
     if (what === 'tracks') return DB.tracks.find((track) => track.id === id);
   },
 
-  update: (id: string, dto: UpdateUserDto) => {
+  update: (id: string, dto: UpdateUserPasswordDto) => {
     let foundIndex = DB.users.findIndex((user) => user.id === id);
-    if (foundIndex === -1) return null;
 
-    let foundUser = DB.users[foundIndex];
+    let user = DB.users[foundIndex];
+    user.version += 1;
+    user.password = dto.newPassword;
+    user.updatedAt = Number(Date.now());
 
-    let version = Number(foundUser.version);
-    version += 1;
+    DB.users.splice(foundIndex, 1, user);
 
-    foundUser = {
-      ...foundUser,
-      ...dto,
-      version,
-      updatedAt: Number(Date.now()),
-    };
-
-    DB.users.splice(foundIndex, 1, foundUser);
-    return foundUser;
+    return user;
   },
 
   updateArtist: (id: string, dto: UpdateArtistDto) => {

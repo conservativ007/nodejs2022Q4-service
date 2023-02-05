@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { DB } from 'src/DB/DB';
+import { DBFavorites } from 'src/DB/DBFavorites';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 
@@ -22,6 +23,19 @@ export class TracksService {
   }
 
   trackDelete(id: string) {
-    return DB.delete(id, 'tracks');
+    let isTrackDeted = DB.delete(id, 'tracks');
+
+    if (isTrackDeted === false) {
+      throw new HttpException(`Such id: ${id} not found`, 404);
+    }
+
+    // in this place we'll delete tracks from favorites tracks if it's exists
+    let foundIndex = DBFavorites.favorites.tracks.findIndex(
+      (track) => track.id === id,
+    );
+
+    if (foundIndex !== -1) {
+      DBFavorites.favorites.tracks.splice(foundIndex, 1);
+    }
   }
 }

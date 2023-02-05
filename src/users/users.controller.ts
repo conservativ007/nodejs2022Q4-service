@@ -4,23 +4,21 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
+  HttpCode,
   Param,
   ParseUUIDPipe,
   Post,
   Put,
   Res,
   UseInterceptors,
-  UsePipes,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto.ts';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
 import { Response } from 'express';
-// import { UserValidationPipe } from '../validation/createUserValidationPipe';
 import { ValidationPipe } from '../validation/validation.pipe';
 import { UserEntity } from './entity/UserEntity';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -46,32 +44,19 @@ export class UsersController {
     return new UserEntity(user);
   }
 
-  // @UsePipes(UserValidationPipe)
   @Post()
   createUser(@Body() dto: CreateUserDto): UserEntity {
     let user = this.userService.create(dto);
     return new UserEntity(user);
   }
 
-  // @UsePipes(UserValidationPipe)
+  @HttpCode(200)
   @Put(':id')
   updateUser(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(new ValidationPipe()) dto: UpdateUserDto,
-    @Res({ passthrough: true }) res: Response,
+    @Body() dto: UpdateUserPasswordDto,
   ): UserEntity {
     let user = this.userService.update(id, dto);
-
-    if (Object.keys(dto).length === 0) {
-      res.status(400);
-      return;
-    }
-
-    if (user === null) {
-      res.status(404);
-      return;
-    }
-
     return new UserEntity(user);
   }
 

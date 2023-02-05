@@ -1,5 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { DB } from 'src/DB/DB';
+import { DBFavorites } from 'src/DB/DBFavorites';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 
@@ -27,11 +28,21 @@ export class ArtistsService {
       throw new HttpException(`Such id: ${id} not found`, 404);
     }
 
+    // in this place we'll delete artistId from track if it's exists
     let track = DB.tracks.find((track) => track.artistId === id);
 
-    if (track === undefined) return;
+    if (track !== undefined) {
+      track.artistId = null;
+      DB.updateTrack(track.id, track);
+    }
 
-    track.artistId = null;
-    DB.updateTrack(track.id, track);
+    // in this place we'll delete artist from favorites artists if it's exists
+    let foundIndex = DBFavorites.favorites.artists.findIndex(
+      (artist) => artist.id === id,
+    );
+
+    if (foundIndex !== -1) {
+      DBFavorites.favorites.artists.splice(foundIndex, 1);
+    }
   }
 }
