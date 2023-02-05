@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   ParseUUIDPipe,
   Post,
@@ -58,16 +59,9 @@ export class ArtistsController {
     return artist;
   }
 
+  @HttpCode(204)
   @Delete(':id')
-  deleteUSer(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    let isUserDeleted = this.artistService.artistDelete(id);
-    if (isUserDeleted === true) {
-      res.status(204);
-      return;
-    }
-    res.status(404);
+  deleteUSer(@Param('id', ParseUUIDPipe) id: string) {
+    this.artistService.artistDelete(id);
   }
 }

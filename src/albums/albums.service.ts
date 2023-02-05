@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { DB } from 'src/DB';
+import { HttpException, Injectable } from '@nestjs/common';
+import { DB } from 'src/DB/DB';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 
@@ -22,6 +22,17 @@ export class AlbumsService {
   }
 
   albumDelete(id: string) {
-    return DB.delete(id, 'albums');
+    let isAlbumDeleted = DB.delete(id, 'albums');
+    if (isAlbumDeleted === false) {
+      throw new HttpException(`Such id: ${id} not found`, 404);
+    }
+
+    let track = DB.tracks.find((track) => track.albumId === id);
+
+    if (track === undefined) return;
+
+    // in this place we'll delete albumId from track if it's exists
+    track.albumId = null;
+    DB.updateTrack(track.id, track);
   }
 }

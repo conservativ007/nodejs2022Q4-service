@@ -1,34 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import { DB } from 'src/DB';
-import { AddTrackToFavoriteDto } from './dto/create-favs-track.dto';
+import { DBFavorites } from '../DB/DBFavorites';
 
 @Injectable()
 export class FavoritesService {
   getAll() {
-    return DB.getAll('favorites');
+    return DBFavorites.getAll();
   }
 
   addTrackToFavs(dto) {
-    return DB.addTrackToFavorites(dto);
+    return DBFavorites.addTrackToFavorites(dto);
   }
 
   addAlbumToFavs(dto) {
-    return DB.addAlbumToFavorites(dto);
+    return DBFavorites.addAlbumToFavorites(dto);
   }
 
   addArtistToFavs(dto) {
-    return DB.addArtistToFavorites(dto);
+    return DBFavorites.addArtistToFavorites(dto);
   }
 
   deleteTrackFromFavs(id: string) {
-    return DB.deleteTrackFromFavs(id);
+    return DBFavorites.deleteTrackFromFavs(id);
   }
 
   deleteArtistFromFavs(id: string) {
-    return DB.deleteArtistFromFavs(id);
+    return DBFavorites.deleteArtistFromFavs(id);
   }
 
   deleteAlbumFromFavs(id: string) {
-    return DB.deleteAlbumFromFavs(id);
+    return DBFavorites.deleteAlbumFromFavs(id);
   }
 }

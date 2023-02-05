@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   ParseUUIDPipe,
   Post,
@@ -14,18 +15,22 @@ import { AlbumsService } from './albums.service';
 import { Response } from 'express';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { TracksService } from 'src/tracks/tracks.service';
 
 @Controller('album')
 export class AlbumsController {
-  constructor(private albumsService: AlbumsService) {}
+  constructor(
+    private albumsService: AlbumsService,
+    private tracksService: TracksService,
+  ) {}
 
   @Get()
-  getAllUsers() {
+  getAllAlbums() {
     return this.albumsService.getAll();
   }
 
   @Get(':id')
-  getArtistById(
+  getAlbumById(
     @Param('id', ParseUUIDPipe) id: string,
     @Res({ passthrough: true }) res: Response,
   ) {
@@ -39,13 +44,13 @@ export class AlbumsController {
   }
 
   @Post()
-  createUser(@Body(new ValidationPipe()) dto: CreateAlbumDto) {
-    let user = this.albumsService.create(dto);
-    return user;
+  createAlbum(@Body(new ValidationPipe()) dto: CreateAlbumDto) {
+    let album = this.albumsService.create(dto);
+    return album;
   }
 
   @Put(':id')
-  updateUser(
+  updateAlbum(
     @Param('id', ParseUUIDPipe) id: string,
     @Body(new ValidationPipe()) dto: UpdateAlbumDto,
     @Res({ passthrough: true }) res: Response,
@@ -58,16 +63,9 @@ export class AlbumsController {
     return album;
   }
 
+  @HttpCode(204)
   @Delete(':id')
-  deleteUSer(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    let isAlbumDeleted = this.albumsService.albumDelete(id);
-    if (isAlbumDeleted === true) {
-      res.status(204);
-      return;
-    }
-    res.status(404);
+  deleteAlbum(@Param('id', ParseUUIDPipe) id: string) {
+    return this.albumsService.albumDelete(id);
   }
 }
