@@ -18,7 +18,7 @@ export class UsersService {
   }
 
   update(id: string, dto: UpdateUserPasswordDto) {
-    let { oldPassword, newPassword } = dto;
+    const { oldPassword, newPassword } = dto;
 
     // check body params
     if (typeof oldPassword !== 'string' || typeof newPassword !== 'string') {
@@ -29,13 +29,13 @@ export class UsersService {
     }
 
     // is user exist
-    let foundUser = DB.users.find((user) => user.id === id);
+    const foundUser = DB.users.find((user) => user.id === id);
     if (foundUser === undefined) {
       throw new HttpException(`user not found`, 404);
     }
 
     // compare passwords
-    let comparePasswords = foundUser.password === oldPassword;
+    const comparePasswords = foundUser.password === oldPassword;
     if (comparePasswords === false) {
       throw new HttpException(`you must enter valid old password`, 403);
     }

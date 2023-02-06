@@ -9,6 +9,7 @@ import { TracksModule } from './tracks/tracks.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { AlbumsService } from './albums/albums.service';
 import { ArtistsService } from './artists/artists.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ArtistsService } from './artists/artists.service';
     AlbumsModule,
     TracksModule,
     FavoritesModule,
+    ConfigModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService, TracksService, AlbumsService, ArtistsService],

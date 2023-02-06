@@ -81,7 +81,7 @@ export const DB = {
   },
 
   createUser: (dto: CreateUserDto) => {
-    let newUser = {
+    const newUser = {
       id: uuid(),
       ...dto,
       version: 1,
@@ -94,7 +94,7 @@ export const DB = {
   },
 
   createArtist: (dto: CreateArtistDto) => {
-    let newArtist = {
+    const newArtist = {
       id: uuid(),
       ...dto,
     };
@@ -104,9 +104,9 @@ export const DB = {
   },
 
   createAlbum: (dto: CreateAlbumDto) => {
-    let { artistId } = dto;
+    const { artistId } = dto;
 
-    let newAlbum = {
+    const newAlbum = {
       id: uuid(),
       ...dto,
       artistId: artistId ? artistId : null,
@@ -117,9 +117,9 @@ export const DB = {
   },
 
   createTrack: (dto: CreateTrackDto) => {
-    let { artistId, albumId } = dto;
+    const { artistId, albumId } = dto;
 
-    let newTrack = {
+    const newTrack = {
       id: uuid(),
       ...dto,
       artistId: artistId ? artistId : null,
@@ -139,9 +139,9 @@ export const DB = {
   },
 
   update: (id: string, dto: UpdateUserPasswordDto) => {
-    let foundIndex = DB.users.findIndex((user) => user.id === id);
+    const foundIndex = DB.users.findIndex((user) => user.id === id);
 
-    let user = DB.users[foundIndex];
+    const user = DB.users[foundIndex];
     user.version += 1;
     user.password = dto.newPassword;
     user.updatedAt = Number(Date.now());
@@ -152,7 +152,7 @@ export const DB = {
   },
 
   updateArtist: (id: string, dto: UpdateArtistDto) => {
-    let foundIndex = DB.artists.findIndex((user) => user.id === id);
+    const foundIndex = DB.artists.findIndex((user) => user.id === id);
     if (foundIndex === -1) return null;
 
     let foundArtist = DB.artists[foundIndex];
@@ -167,7 +167,7 @@ export const DB = {
   },
 
   updateAlbum: (id: string, dto: UpdateAlbumDto) => {
-    let foundIndex = DB.albums.findIndex((user) => user.id === id);
+    const foundIndex = DB.albums.findIndex((user) => user.id === id);
     if (foundIndex === -1) return null;
 
     let foundAlbum = DB.albums[foundIndex];
@@ -182,7 +182,7 @@ export const DB = {
   },
 
   updateTrack: (id: string, dto: UpdateTrackDto) => {
-    let foundIndex = DB.tracks.findIndex((track) => track.id === id);
+    const foundIndex = DB.tracks.findIndex((track) => track.id === id);
     if (foundIndex === -1) return null;
 
     let foundTrack = DB.tracks[foundIndex];

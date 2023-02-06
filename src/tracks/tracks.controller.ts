@@ -9,7 +9,6 @@ import {
   Post,
   Put,
   Res,
-  ValidationPipe,
 } from '@nestjs/common';
 import { TracksService } from './tracks.service';
 import { Response } from 'express';
@@ -30,7 +29,7 @@ export class TracksController {
     @Param('id', ParseUUIDPipe) id: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    let track = this.trackService.getById(id);
+    const track = this.trackService.getById(id);
     if (track === undefined) {
       res.status(404);
       return;
@@ -40,18 +39,18 @@ export class TracksController {
   }
 
   @Post()
-  createTrack(@Body(new ValidationPipe()) dto: CreateTrackDto) {
-    let track = this.trackService.create(dto);
+  createTrack(@Body() dto: CreateTrackDto) {
+    const track = this.trackService.create(dto);
     return track;
   }
 
   @Put(':id')
   updateTrack(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(new ValidationPipe()) dto: UpdateTrackDto,
+    @Body() dto: UpdateTrackDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    let track = this.trackService.update(id, dto);
+    const track = this.trackService.update(id, dto);
     if (track === null) {
       res.status(404);
       return;

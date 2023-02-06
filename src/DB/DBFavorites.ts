@@ -63,7 +63,7 @@ export const DBFavorites = {
   },
 
   deleteTrackFromFavs: (id: string) => {
-    let foundIndex = DBFavorites.favorites.tracks.findIndex(
+    const foundIndex = DBFavorites.favorites.tracks.findIndex(
       (track) => track.id === id,
     );
     if (foundIndex === -1) {
@@ -75,7 +75,7 @@ export const DBFavorites = {
   },
 
   deleteArtistFromFavs: (id: string) => {
-    let foundIndex = DBFavorites.favorites.artists.findIndex(
+    const foundIndex = DBFavorites.favorites.artists.findIndex(
       (artist) => artist.id === id,
     );
     if (foundIndex === -1) {
@@ -86,7 +86,7 @@ export const DBFavorites = {
     return true;
   },
   deleteAlbumFromFavs: (id: string) => {
-    let foundIndex = DBFavorites.favorites.albums.findIndex(
+    const foundIndex = DBFavorites.favorites.albums.findIndex(
       (album) => album.id === id,
     );
     if (foundIndex === -1) {

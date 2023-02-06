@@ -9,7 +9,6 @@ import {
   Post,
   Put,
   Res,
-  ValidationPipe,
 } from '@nestjs/common';
 import { ArtistsService } from './artists.service';
 import { Response } from 'express';
@@ -30,7 +29,7 @@ export class ArtistsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    let artist = this.artistService.getById(id);
+    const artist = this.artistService.getById(id);
     if (artist === undefined) {
       res.status(404);
       return;
@@ -40,18 +39,18 @@ export class ArtistsController {
   }
 
   @Post()
-  createUser(@Body(new ValidationPipe()) dto: CreateArtistDto) {
-    let user = this.artistService.create(dto);
+  createUser(@Body() dto: CreateArtistDto) {
+    const user = this.artistService.create(dto);
     return user;
   }
 
   @Put(':id')
   updateUser(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(new ValidationPipe()) dto: UpdateArtistDto,
+    @Body() dto: UpdateArtistDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    let artist = this.artistService.update(id, dto);
+    const artist = this.artistService.update(id, dto);
     if (artist === null) {
       res.status(404);
       return;

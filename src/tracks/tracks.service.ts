@@ -23,14 +23,14 @@ export class TracksService {
   }
 
   trackDelete(id: string) {
-    let isTrackDeted = DB.delete(id, 'tracks');
+    const isTrackDeted = DB.delete(id, 'tracks');
 
     if (isTrackDeted === false) {
       throw new HttpException(`Such id: ${id} not found`, 404);
     }
 
     // in this place we'll delete tracks from favorites tracks if it's exists
-    let foundIndex = DBFavorites.favorites.tracks.findIndex(
+    const foundIndex = DBFavorites.favorites.tracks.findIndex(
       (track) => track.id === id,
     );
 

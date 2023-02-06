@@ -16,7 +16,6 @@ import { CreateUserDto } from './dto/create-user.dto.ts';
 import { UsersService } from './users.service';
 
 import { Response } from 'express';
-import { ValidationPipe } from '../validation/validation.pipe';
 import { UserEntity } from './entity/UserEntity';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 
@@ -35,7 +34,7 @@ export class UsersController {
     @Param('id', ParseUUIDPipe) id: string,
     @Res({ passthrough: true }) res: Response,
   ): UserEntity {
-    let user = this.userService.getById(id);
+    const user = this.userService.getById(id);
     if (user === undefined) {
       res.status(404);
       return;
@@ -46,7 +45,7 @@ export class UsersController {
 
   @Post()
   createUser(@Body() dto: CreateUserDto): UserEntity {
-    let user = this.userService.create(dto);
+    const user = this.userService.create(dto);
     return new UserEntity(user);
   }
 
@@ -56,7 +55,7 @@ export class UsersController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateUserPasswordDto,
   ): UserEntity {
-    let user = this.userService.update(id, dto);
+    const user = this.userService.update(id, dto);
     return new UserEntity(user);
   }
 
@@ -65,7 +64,7 @@ export class UsersController {
     @Param('id', ParseUUIDPipe) id: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    let isUserDeleted = this.userService.userDelete(id);
+    const isUserDeleted = this.userService.userDelete(id);
     if (isUserDeleted === true) {
       res.status(204);
       return;

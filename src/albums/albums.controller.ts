@@ -9,7 +9,6 @@ import {
   Post,
   Put,
   Res,
-  ValidationPipe,
 } from '@nestjs/common';
 import { AlbumsService } from './albums.service';
 import { Response } from 'express';
@@ -30,7 +29,7 @@ export class AlbumsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    let artist = this.albumsService.getById(id);
+    const artist = this.albumsService.getById(id);
     if (artist === undefined) {
       res.status(404);
       return;
@@ -40,18 +39,18 @@ export class AlbumsController {
   }
 
   @Post()
-  createAlbum(@Body(new ValidationPipe()) dto: CreateAlbumDto) {
-    let album = this.albumsService.create(dto);
+  createAlbum(@Body() dto: CreateAlbumDto) {
+    const album = this.albumsService.create(dto);
     return album;
   }
 
   @Put(':id')
   updateAlbum(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(new ValidationPipe()) dto: UpdateAlbumDto,
+    @Body() dto: UpdateAlbumDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    let album = this.albumsService.update(id, dto);
+    const album = this.albumsService.update(id, dto);
     if (album === null) {
       res.status(404);
       return;

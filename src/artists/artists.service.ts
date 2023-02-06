@@ -23,13 +23,13 @@ export class ArtistsService {
   }
 
   artistDelete(id: string) {
-    let isAlbumDeleted = DB.delete(id, 'artists');
+    const isAlbumDeleted = DB.delete(id, 'artists');
     if (isAlbumDeleted === false) {
       throw new HttpException(`Such id: ${id} not found`, 404);
     }
 
     // in this place we'll delete artistId from track if it's exists
-    let track = DB.tracks.find((track) => track.artistId === id);
+    const track = DB.tracks.find((track) => track.artistId === id);
 
     if (track !== undefined) {
       track.artistId = null;
@@ -37,7 +37,7 @@ export class ArtistsService {
     }
 
     // in this place we'll delete artist from favorites artists if it's exists
-    let foundIndex = DBFavorites.favorites.artists.findIndex(
+    const foundIndex = DBFavorites.favorites.artists.findIndex(
       (artist) => artist.id === id,
     );
 
