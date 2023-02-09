@@ -10,13 +10,14 @@ import {
   Post,
   Put,
   Res,
+  UseFilters,
   UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto.ts';
 import { UsersService } from './users.service';
 
 import { Response } from 'express';
-import { UserEntity } from './entity/UserEntity';
+import { UserEntity } from './entity/user.entity';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 
 @Controller('user')
@@ -30,45 +31,32 @@ export class UsersController {
   }
 
   @Get(':id')
-  getUserById(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Res({ passthrough: true }) res: Response,
-  ): UserEntity {
-    const user = this.userService.getById(id);
-    if (user === undefined) {
-      res.status(404);
-      return;
-    }
-    res.status(200);
+  @HttpCode(200)
+  async getUserById(@Param('id', ParseUUIDPipe) id: string) {
+    const user = await this.userService.getById(id);
     return new UserEntity(user);
   }
 
   @Post()
-  createUser(@Body() dto: CreateUserDto): UserEntity {
-    const user = this.userService.create(dto);
-    return new UserEntity(user);
+  async createUser(@Body() dto: CreateUserDto) {
+    const user = await this.userService.create(dto);
+    let serializeUser = new UserEntity(user);
+    return serializeUser;
   }
 
   @HttpCode(200)
   @Put(':id')
-  updateUser(
+  async updateUser(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateUserPasswordDto,
-  ): UserEntity {
-    const user = this.userService.update(id, dto);
+  ) {
+    const user = await this.userService.update(id, dto);
     return new UserEntity(user);
   }
 
+  @HttpCode(204)
   @Delete(':id')
-  deleteUSer(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const isUserDeleted = this.userService.userDelete(id);
-    if (isUserDeleted === true) {
-      res.status(204);
-      return;
-    }
-    res.status(404);
+  deleteUSer(@Param('id', ParseUUIDPipe) id: string) {
+    return this.userService.userDelete(id);
   }
 }

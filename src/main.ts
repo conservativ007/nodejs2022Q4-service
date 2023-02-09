@@ -5,6 +5,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { SwaggerModule } from '@nestjs/swagger';
+import { EntityNotFoundExceptionFilter } from './filters/entity-not-found-exception.filter';
+import { GlobalExceptionFilter } from './filters/GlobalExceptionFilter';
 
 dotenv.config();
 const PORT = process.env.PORT || 4000;
@@ -20,6 +22,9 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  app.useGlobalFilters(new GlobalExceptionFilter());
+  // app.useGlobalFilters(new EntityNotFoundExceptionFilter());
 
   const PATH = join(process.cwd() + '/doc/openapi.json');
   const openApi = await readFile(PATH);
