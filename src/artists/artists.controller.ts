@@ -25,16 +25,9 @@ export class ArtistsController {
   }
 
   @Get(':id')
-  getArtistById(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  @HttpCode(200)
+  getArtistById(@Param('id', ParseUUIDPipe) id: string) {
     const artist = this.artistService.getById(id);
-    if (artist === undefined) {
-      res.status(404);
-      return;
-    }
-    res.status(200);
     return artist;
   }
 
@@ -44,23 +37,19 @@ export class ArtistsController {
     return user;
   }
 
+  @HttpCode(200)
   @Put(':id')
   updateUser(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateArtistDto,
-    @Res({ passthrough: true }) res: Response,
   ) {
     const artist = this.artistService.update(id, dto);
-    if (artist === null) {
-      res.status(404);
-      return;
-    }
     return artist;
   }
 
   @HttpCode(204)
   @Delete(':id')
   deleteUSer(@Param('id', ParseUUIDPipe) id: string) {
-    this.artistService.artistDelete(id);
+    return this.artistService.artistDelete(id);
   }
 }

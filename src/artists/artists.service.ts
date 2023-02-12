@@ -1,48 +1,78 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { DB } from 'src/DB/DB';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { DBFavorites } from 'src/DB/DBFavorites';
+import { Repository } from 'typeorm';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
+import { ArtistEntity } from './entity/artist.entity';
 
 @Injectable()
 export class ArtistsService {
-  getAll() {
-    return DB.getAll('artists');
+  constructor(
+    @InjectRepository(ArtistEntity)
+    private artistRepository: Repository<ArtistEntity>,
+  ) {}
+
+  async getAll(): Promise<ArtistEntity[]> {
+    return await this.artistRepository.find();
   }
 
-  getById(id: string) {
-    return DB.getById(id, 'artists');
+  async getById(id: string) {
+    try {
+      const artist = await this.artistRepository.findOneOrFail({
+        where: { id },
+      });
+      return artist;
+    } catch (error) {
+      throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
   }
 
-  create(dto: CreateArtistDto) {
-    return DB.createArtist(dto);
+  async create(dto: CreateArtistDto): Promise<ArtistEntity> {
+    let newUser = this.artistRepository.create(dto);
+    return await this.artistRepository.save(newUser);
   }
 
-  update(id: string, dto: UpdateArtistDto) {
-    return DB.updateArtist(id, dto);
-  }
-
-  artistDelete(id: string) {
-    const isAlbumDeleted = DB.delete(id, 'artists');
-    if (isAlbumDeleted === false) {
-      throw new HttpException(`Such id: ${id} not found`, 404);
+  async update(id: string, dto: UpdateArtistDto) {
+    let foundArtist: any;
+    try {
+      foundArtist = await this.artistRepository.findOneOrFail({
+        where: { id },
+      });
+    } catch (error) {
+      throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    // in this place we'll delete artistId from track if it's exists
-    const track = DB.tracks.find((track) => track.artistId === id);
+    return this.artistRepository.save({
+      ...foundArtist,
+      ...dto,
+    });
+  }
 
-    if (track !== undefined) {
-      track.artistId = null;
-      DB.updateTrack(track.id, track);
+  async artistDelete(id: string) {
+    try {
+      await this.artistRepository.findOneOrFail({ where: { id } });
+    } catch (error) {
+      throw new HttpException('such artist ID not', HttpStatus.NOT_FOUND);
     }
 
-    // in this place we'll delete artist from favorites artists if it's exists
-    const foundIndex = DBFavorites.favorites.artists.findIndex(
-      (artist) => artist.id === id,
-    );
+    this.artistRepository.delete(id);
 
-    if (foundIndex !== -1) {
-      DBFavorites.favorites.artists.splice(foundIndex, 1);
-    }
+    // // in this place we'll delete artistId from track if it's exists
+    // const track = DB.tracks.find((track) => track.artistId === id);
+
+    // if (track !== undefined) {
+    //   track.artistId = null;
+    //   DB.updateTrack(track.id, track);
+    // }
+
+    // // in this place we'll delete artist from favorites artists if it's exists
+    // const foundIndex = DBFavorites.favorites.artists.findIndex(
+    //   (artist) => artist.id === id,
+    // );
+
+    // if (foundIndex !== -1) {
+    //   DBFavorites.favorites.artists.splice(foundIndex, 1);
+    // }
   }
 }
