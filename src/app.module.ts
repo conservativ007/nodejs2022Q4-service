@@ -13,6 +13,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './users/entity/user.entity';
 import { ArtistEntity } from './artists/entity/artist.entity';
+import { AlbumEntity } from './albums/entity/album.entity';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { ArtistEntity } from './artists/entity/artist.entity';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
-        entities: [UserEntity, ArtistEntity],
+        entities: [UserEntity, ArtistEntity, AlbumEntity],
         synchronize: true,
       }),
       inject: [ConfigService],
@@ -38,6 +39,6 @@ import { ArtistEntity } from './artists/entity/artist.entity';
     ConfigModule.forRoot({ isGlobal: true }),
   ],
   controllers: [AppController],
-  providers: [AppService, TracksService, AlbumsService],
+  providers: [AppService, TracksService],
 })
 export class AppModule {}

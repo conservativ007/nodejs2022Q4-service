@@ -53,6 +53,7 @@ export class ArtistsService {
     try {
       await this.artistRepository.findOneOrFail({ where: { id } });
     } catch (error) {
+      // console.log('from artist delete');
       throw new HttpException('such artist ID not', HttpStatus.NOT_FOUND);
     }
 

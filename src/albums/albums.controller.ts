@@ -24,18 +24,14 @@ export class AlbumsController {
     return this.albumsService.getAll();
   }
 
+  @HttpCode(200)
   @Get(':id')
   getAlbumById(
     @Param('id', ParseUUIDPipe) id: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const artist = this.albumsService.getById(id);
-    if (artist === undefined) {
-      res.status(404);
-      return;
-    }
-    res.status(200);
-    return artist;
+    const album = this.albumsService.getById(id);
+    return album;
   }
 
   @Post()
@@ -44,17 +40,13 @@ export class AlbumsController {
     return album;
   }
 
+  @HttpCode(200)
   @Put(':id')
   updateAlbum(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateAlbumDto,
-    @Res({ passthrough: true }) res: Response,
   ) {
     const album = this.albumsService.update(id, dto);
-    if (album === null) {
-      res.status(404);
-      return;
-    }
     return album;
   }
 

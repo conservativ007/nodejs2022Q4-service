@@ -123,23 +123,23 @@ export class FavoritesController {
   //   res.status(204);
   // }
 
-  @Delete('album/:id')
-  deleteAlbumFromFavs(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    // here check if the track exists to DBtracks
-    const isExistAlbum = this.albumService.getById(id);
-    if (isExistAlbum === null) {
-      res.status(404);
-      return;
-    }
-    // here check if the track exists to favorites
-    const albumFavs = this.favsService.deleteAlbumFromFavs(isExistAlbum.id);
-    if (albumFavs === undefined) {
-      res.status(404);
-      return;
-    }
-    res.status(204);
-  }
+  // @Delete('album/:id')
+  // deleteAlbumFromFavs(
+  //   @Param('id', ParseUUIDPipe) id: string,
+  //   @Res({ passthrough: true }) res: Response,
+  // ) {
+  //   // here check if the track exists to DBtracks
+  //   const isExistAlbum = this.albumService.getById(id);
+  //   if (isExistAlbum === null) {
+  //     res.status(404);
+  //     return;
+  //   }
+  //   // here check if the track exists to favorites
+  //   const albumFavs = this.favsService.deleteAlbumFromFavs(isExistAlbum.id);
+  //   if (albumFavs === undefined) {
+  //     res.status(404);
+  //     return;
+  //   }
+  //   res.status(204);
+  // }
 }
