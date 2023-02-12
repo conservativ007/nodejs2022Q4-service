@@ -8,33 +8,26 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  Res,
 } from '@nestjs/common';
 import { TracksService } from './tracks.service';
-import { Response } from 'express';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
+import { clearConfigCache } from 'prettier';
 
 @Controller('track')
 export class TracksController {
   constructor(private trackService: TracksService) {}
 
+  @HttpCode(200)
   @Get()
   getAllTracks() {
     return this.trackService.getAll();
   }
 
+  @HttpCode(200)
   @Get(':id')
-  getTrackById(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  getTrackById(@Param('id', ParseUUIDPipe) id: string) {
     const track = this.trackService.getById(id);
-    if (track === undefined) {
-      res.status(404);
-      return;
-    }
-    res.status(200);
     return track;
   }
 
@@ -44,23 +37,20 @@ export class TracksController {
     return track;
   }
 
+  @HttpCode(200)
   @Put(':id')
   updateTrack(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateTrackDto,
-    @Res({ passthrough: true }) res: Response,
   ) {
     const track = this.trackService.update(id, dto);
-    if (track === null) {
-      res.status(404);
-      return;
-    }
     return track;
   }
 
   @HttpCode(204)
   @Delete(':id')
   deleteTrack(@Param('id', ParseUUIDPipe) id: string) {
-    this.trackService.trackDelete(id);
+    // console.log('from delete track controller');
+    return this.trackService.trackDelete(id);
   }
 }

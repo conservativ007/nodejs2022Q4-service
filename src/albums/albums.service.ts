@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DBFavorites } from 'src/DB/DBFavorites';
+import { TrackEntity } from 'src/tracks/entity/track.entity';
+import { TracksService } from 'src/tracks/tracks.service';
 import { Repository } from 'typeorm';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
@@ -11,6 +13,7 @@ export class AlbumsService {
   constructor(
     @InjectRepository(AlbumEntity)
     private albumRepository: Repository<AlbumEntity>,
+    private trackService: TracksService,
   ) {}
 
   async getAll(): Promise<AlbumEntity[]> {
@@ -58,7 +61,16 @@ export class AlbumsService {
       throw new HttpException('such album ID not found', HttpStatus.NOT_FOUND);
     }
 
-    this.albumRepository.delete(id);
+    await this.albumRepository.delete(id);
+
+    let tracks = await this.trackService.getAll();
+    let track = tracks.find((track) => track.albumId === id);
+
+    if (track) {
+      track.albumId = null;
+      await this.trackService.update(track.id, track);
+    }
+
     //   const isAlbumDeleted = DB.delete(id, 'albums');
     //   if (isAlbumDeleted === false) {
     //     throw new HttpException(`Such id: ${id} not found`, 404);

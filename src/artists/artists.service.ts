@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DBFavorites } from 'src/DB/DBFavorites';
+import { TracksService } from 'src/tracks/tracks.service';
 import { Repository } from 'typeorm';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
@@ -11,6 +12,7 @@ export class ArtistsService {
   constructor(
     @InjectRepository(ArtistEntity)
     private artistRepository: Repository<ArtistEntity>,
+    private trackService: TracksService,
   ) {}
 
   async getAll(): Promise<ArtistEntity[]> {
@@ -52,12 +54,18 @@ export class ArtistsService {
   async artistDelete(id: string) {
     try {
       await this.artistRepository.findOneOrFail({ where: { id } });
+      await this.artistRepository.delete(id);
     } catch (error) {
-      // console.log('from artist delete');
       throw new HttpException('such artist ID not', HttpStatus.NOT_FOUND);
     }
 
-    this.artistRepository.delete(id);
+    let tracks = await this.trackService.getAll();
+    let track = tracks.find((track) => track.artistId === id);
+
+    if (track) {
+      track.artistId = null;
+      await this.trackService.update(track.id, track);
+    }
 
     // // in this place we'll delete artistId from track if it's exists
     // const track = DB.tracks.find((track) => track.artistId === id);

@@ -75,29 +75,29 @@ export class FavoritesController {
     res.status(201);
   }
 
-  @Delete('track/:id')
-  deleteTrackFromFavs(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    // here check if the track exists to DBtracks
-    const isExistTrack = this.tracksService.getById(id);
+  // @Delete('track/:id')
+  // deleteTrackFromFavs(
+  //   @Param('id', ParseUUIDPipe) id: string,
+  //   @Res({ passthrough: true }) res: Response,
+  // ) {
+  //   // here check if the track exists to DBtracks
+  //   const isExistTrack = this.tracksService.getById(id);
 
-    if (isExistTrack === null) {
-      res.status(404);
-      return;
-    }
+  //   if (isExistTrack === null) {
+  //     res.status(404);
+  //     return;
+  //   }
 
-    // here check if the track exists to favorites
+  //   // here check if the track exists to favorites
 
-    const trackFavs = this.favsService.deleteTrackFromFavs(isExistTrack.id);
-    if (trackFavs === undefined) {
-      res.status(404);
-      return;
-    }
+  //   const trackFavs = this.favsService.deleteTrackFromFavs(isExistTrack.id);
+  //   if (trackFavs === undefined) {
+  //     res.status(404);
+  //     return;
+  //   }
 
-    res.status(204);
-  }
+  //   res.status(204);
+  // }
 
   // @Delete('artist/:id')
   // deleteArtistFromFavs(
