@@ -7,6 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { clearConfigCache } from 'prettier';
 import {
   QueryFailedError,
   EntityNotFoundError,
@@ -36,7 +37,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         status = (exception as HttpException).getStatus();
         break;
       case QueryFailedError: // this is a TypeOrm error
-        status = HttpStatus.UNPROCESSABLE_ENTITY;
+        status = HttpStatus.BAD_REQUEST;
         message = (exception as QueryFailedError).message;
         code = (exception as any).code;
         break;
@@ -50,8 +51,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         message = (exception as CannotCreateEntityIdMapError).message;
         code = (exception as any).code;
         break;
-      default:
-        status = HttpStatus.INTERNAL_SERVER_ERROR;
+      // default:
+      //   console.log('exception');
+      //   console.log(exception);
+      //   status = HttpStatus.NOT_FOUND;
     }
 
     response

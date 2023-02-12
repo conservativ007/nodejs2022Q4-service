@@ -23,7 +23,7 @@ async function bootstrap() {
     }),
   );
 
-  app.useGlobalFilters(new GlobalExceptionFilter());
+  // app.useGlobalFilters(new GlobalExceptionFilter());
   // app.useGlobalFilters(new EntityNotFoundExceptionFilter());
 
   const PATH = join(process.cwd() + '/doc/openapi.json');

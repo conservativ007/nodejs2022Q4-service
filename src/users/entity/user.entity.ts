@@ -10,7 +10,7 @@ export class UserEntity {
   login: string;
 
   @Column()
-  // @Exclude()
+  @Exclude()
   password: string;
 
   @Column()

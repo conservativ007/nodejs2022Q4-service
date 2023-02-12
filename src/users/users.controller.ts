@@ -19,6 +19,7 @@ import { UsersService } from './users.service';
 import { Response } from 'express';
 import { UserEntity } from './entity/user.entity';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
+import { clearConfigCache } from 'prettier';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)

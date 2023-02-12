@@ -1,6 +1,5 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DB } from 'src/DB/DB';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto.ts';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
@@ -14,7 +13,6 @@ export class UsersService {
   ) {}
 
   getAll(): Promise<UserEntity[]> {
-    // return DB.getAll('users');
     return this.userRepository.find();
   }
 
@@ -31,8 +29,12 @@ export class UsersService {
   }
 
   async getById(id: string): Promise<UserEntity> {
-    const user = await this.userRepository.findOneOrFail({ where: { id } });
-    return user;
+    try {
+      const user = await this.userRepository.findOneOrFail({ where: { id } });
+      return user;
+    } catch (error) {
+      throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
   }
 
   async update(id: string, dto: UpdateUserPasswordDto) {
@@ -40,42 +42,42 @@ export class UsersService {
 
     // check body params
     if (typeof oldPassword !== 'string' || typeof newPassword !== 'string') {
-      throw new HttpException(
-        `you must enter oldPassword and newPassword and it's must be a string`,
-        400,
-      );
+      throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    // is user exist
-    // const foundUser = DB.users.find((user) => user.id === id);
-    // if (foundUser === undefined) {
-    //   throw new HttpException(`user not found`, 404);
-    // }
-
-    // if the user does not find, will throw the HttpException
-    const foundUser = await this.userRepository.findOneOrFail({
-      where: { id },
-    });
+    // if the user does not find, we will throw the HttpException
+    let foundUser: any;
+    try {
+      foundUser = await this.userRepository.findOneOrFail({
+        where: { id },
+      });
+    } catch (error) {
+      throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
 
     // compare passwords
     const comparePasswords = foundUser.password === oldPassword;
     if (comparePasswords === false) {
-      throw new Error('the 403 status code');
-      // I must to change the error func,
-      // it must be a 403 status code
-      // throw new HttpException(`you must enter valid old password`, 403);
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
+
+    foundUser.version = foundUser.version += 1;
+    foundUser.createdAt = Number(foundUser.createdAt);
+    foundUser.updatedAt = Number(new Date());
 
     return this.userRepository.save({
       ...foundUser,
       password: newPassword,
     });
-
-    return DB.update(id, dto);
   }
 
   async userDelete(id: string) {
-    const user = await this.userRepository.findOneOrFail({ where: { id } });
-    if (user) this.userRepository.delete(id);
+    try {
+      await this.userRepository.findOneOrFail({ where: { id } });
+    } catch (error) {
+      throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    this.userRepository.delete(id);
   }
 }
