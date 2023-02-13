@@ -78,6 +78,6 @@ export class UsersService {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    this.userRepository.delete(id);
+    await this.userRepository.delete(id);
   }
 }

@@ -1,7 +1,12 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DBFavorites } from 'src/DB/DBFavorites';
-import { TrackEntity } from 'src/tracks/entity/track.entity';
+import { FavoritesAlbumsEntity } from 'src/favorites/entity/favoritesAlbum.entity';
 import { TracksService } from 'src/tracks/tracks.service';
 import { Repository } from 'typeorm';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -13,6 +18,9 @@ export class AlbumsService {
   constructor(
     @InjectRepository(AlbumEntity)
     private albumRepository: Repository<AlbumEntity>,
+
+    @InjectRepository(FavoritesAlbumsEntity)
+    private albumFavs: Repository<FavoritesAlbumsEntity>,
     private trackService: TracksService,
   ) {}
 
@@ -20,13 +28,22 @@ export class AlbumsService {
     return await this.albumRepository.find();
   }
 
-  async getById(id: string): Promise<AlbumEntity> {
+  async getById(id: string, favorites = false): Promise<AlbumEntity> {
+    // console.log('from AlbumsService ');
+    // console.log(id, favorites);
+
     try {
       return await this.albumRepository.findOneOrFail({
         where: { id },
       });
     } catch (error) {
-      throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+      if (favorites === false) {
+        throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException(
+        'UNPROCESSABLE_ENTITY',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
   }
 
@@ -71,26 +88,6 @@ export class AlbumsService {
       await this.trackService.update(track.id, track);
     }
 
-    //   const isAlbumDeleted = DB.delete(id, 'albums');
-    //   if (isAlbumDeleted === false) {
-    //     throw new HttpException(`Such id: ${id} not found`, 404);
-    //   }
-
-    //   const track = DB.tracks.find((track) => track.albumId === id);
-
-    //   if (track === undefined) return;
-
-    //   // in this place we'll delete albumId from track if it's exists
-    //   track.albumId = null;
-    //   DB.updateTrack(track.id, track);
-
-    //   // in this place we'll delete artist from favorites artists if it's exists
-    //   const foundIndex = DBFavorites.favorites.albums.findIndex(
-    //     (album) => album.id === id,
-    //   );
-
-    //   if (foundIndex !== -1) {
-    //     DBFavorites.favorites.albums.splice(foundIndex, 1);
-    //   }
+    await this.albumFavs.delete(id);
   }
 }

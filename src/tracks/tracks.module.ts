@@ -3,9 +3,10 @@ import { TracksService } from './tracks.service';
 import { TracksController } from './tracks.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TrackEntity } from './entity/track.entity';
+import { FavoritesTracksEntity } from 'src/favorites/entity/favoritesTracks.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([TrackEntity])],
+  imports: [TypeOrmModule.forFeature([TrackEntity, FavoritesTracksEntity])],
   providers: [TracksService],
   controllers: [TracksController],
   exports: [TracksService],

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -15,6 +15,9 @@ import { UserEntity } from './users/entity/user.entity';
 import { ArtistEntity } from './artists/entity/artist.entity';
 import { AlbumEntity } from './albums/entity/album.entity';
 import { TrackEntity } from './tracks/entity/track.entity';
+import { FavoritesArtistsEntity } from './favorites/entity/favoriteArtist.entity';
+import { FavoritesAlbumsEntity } from './favorites/entity/favoritesAlbum.entity';
+import { FavoritesTracksEntity } from './favorites/entity/favoritesTracks.entity';
 
 @Module({
   imports: [
@@ -27,7 +30,15 @@ import { TrackEntity } from './tracks/entity/track.entity';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
-        entities: [UserEntity, ArtistEntity, AlbumEntity, TrackEntity],
+        entities: [
+          UserEntity,
+          ArtistEntity,
+          AlbumEntity,
+          TrackEntity,
+          FavoritesArtistsEntity,
+          FavoritesAlbumsEntity,
+          FavoritesTracksEntity,
+        ],
         synchronize: true,
       }),
       inject: [ConfigService],
@@ -38,6 +49,8 @@ import { TrackEntity } from './tracks/entity/track.entity';
     TracksModule,
     FavoritesModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    // forwardRef(() => ArtistsModule),
+    // forwardRef(() => TracksModule),
   ],
   controllers: [AppController],
   providers: [AppService],
