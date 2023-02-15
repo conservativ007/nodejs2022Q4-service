@@ -8,12 +8,25 @@ services:
       - ${PORT}:${PORT}
     environment:
       - ${PORT}
+
+    restart: always
+
+    volumes:
+      - ./src:/usr/app/src
   postgres:
     restart: always
     build: ./database/
+
+    # create volumes it save our data
+    volumes:
+      - nodejs-service:/data/db
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+
+# our data will be available outside
+volumes:
+  nodejs-service:
