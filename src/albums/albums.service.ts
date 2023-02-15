@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FavoritesAlbumsEntity } from 'src/favorites/entity/favoritesAlbum.entity';
 import { TracksService } from 'src/tracks/tracks.service';
@@ -29,9 +23,6 @@ export class AlbumsService {
   }
 
   async getById(id: string, favorites = false): Promise<AlbumEntity> {
-    // console.log('from AlbumsService ');
-    // console.log(id, favorites);
-
     try {
       return await this.albumRepository.findOneOrFail({
         where: { id },
@@ -48,10 +39,10 @@ export class AlbumsService {
   }
 
   async create(dto: CreateAlbumDto): Promise<AlbumEntity> {
-    let isArtistId = dto.artistId;
+    const isArtistId = dto.artistId;
     if (isArtistId === undefined) dto.artistId = null;
 
-    let newUser = this.albumRepository.create(dto);
+    const newUser = this.albumRepository.create(dto);
     return await this.albumRepository.save(newUser);
   }
 
@@ -80,8 +71,8 @@ export class AlbumsService {
 
     await this.albumRepository.delete(id);
 
-    let tracks = await this.trackService.getAll();
-    let track = tracks.find((track) => track.albumId === id);
+    const tracks = await this.trackService.getAll();
+    const track = tracks.find((track) => track.albumId === id);
 
     if (track) {
       track.albumId = null;

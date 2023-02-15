@@ -8,10 +8,8 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  Res,
 } from '@nestjs/common';
 import { AlbumsService } from './albums.service';
-import { Response } from 'express';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 
@@ -26,10 +24,7 @@ export class AlbumsController {
 
   @HttpCode(200)
   @Get(':id')
-  getAlbumById(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  getAlbumById(@Param('id', ParseUUIDPipe) id: string) {
     const album = this.albumsService.getById(id);
     return album;
   }

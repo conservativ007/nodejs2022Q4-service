@@ -7,7 +7,6 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { clearConfigCache } from 'prettier';
 import {
   QueryFailedError,
   EntityNotFoundError,

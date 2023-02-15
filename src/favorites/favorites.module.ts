@@ -1,8 +1,7 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AlbumsModule } from 'src/albums/albums.module';
 import { ArtistsModule } from 'src/artists/artists.module';
-import { ArtistsService } from 'src/artists/artists.service';
 import { TracksModule } from 'src/tracks/tracks.module';
 import { FavoritesArtistsEntity } from './entity/favoriteArtist.entity';
 import { FavoritesAlbumsEntity } from './entity/favoritesAlbum.entity';

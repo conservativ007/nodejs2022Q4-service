@@ -2,13 +2,14 @@ version: '3'
 services:
   node:
     build: .
-    ports:
-      - ${PORT}:${PORT}
     depends_on:
       - postgres
+    ports:
+      - ${PORT}:${PORT}
     environment:
-      - PORT=4000
+      - ${PORT}
   postgres:
+    restart: always
     build: ./database/
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}

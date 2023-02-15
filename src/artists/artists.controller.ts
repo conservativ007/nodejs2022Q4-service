@@ -8,10 +8,8 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  Res,
 } from '@nestjs/common';
 import { ArtistsService } from './artists.service';
-import { Response } from 'express';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 

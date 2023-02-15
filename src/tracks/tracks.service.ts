@@ -35,7 +35,7 @@ export class TracksService {
   }
 
   async create(dto: CreateTrackDto) {
-    let track = this.trackRepository.create(dto);
+    const track = this.trackRepository.create(dto);
     return await this.trackRepository.save(track);
   }
 

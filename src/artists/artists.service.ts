@@ -41,7 +41,7 @@ export class ArtistsService {
   }
 
   async create(dto: CreateArtistDto): Promise<ArtistEntity> {
-    let newUser = this.artistRepository.create(dto);
+    const newUser = this.artistRepository.create(dto);
     return await this.artistRepository.save(newUser);
   }
 
@@ -69,8 +69,8 @@ export class ArtistsService {
       throw new HttpException('such artist ID not', HttpStatus.NOT_FOUND);
     }
 
-    let tracks = await this.trackService.getAll();
-    let track = tracks.find((track) => track.artistId === id);
+    const tracks = await this.trackService.getAll();
+    const track = tracks.find((track) => track.artistId === id);
 
     if (track) {
       track.artistId = null;

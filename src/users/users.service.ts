@@ -17,7 +17,7 @@ export class UsersService {
   }
 
   async create(dto: CreateUserDto): Promise<UserEntity> {
-    let user = {
+    const user = {
       ...dto,
       version: 1,
       createdAt: Number(Date.now()),

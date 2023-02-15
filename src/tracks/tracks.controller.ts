@@ -12,7 +12,6 @@ import {
 import { TracksService } from './tracks.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { clearConfigCache } from 'prettier';
 
 @Controller('track')
 export class TracksController {
@@ -50,7 +49,6 @@ export class TracksController {
   @HttpCode(204)
   @Delete(':id')
   deleteTrack(@Param('id', ParseUUIDPipe) id: string) {
-    // console.log('from delete track controller');
     return this.trackService.trackDelete(id);
   }
 }

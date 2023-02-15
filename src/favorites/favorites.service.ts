@@ -26,9 +26,9 @@ export class FavoritesService {
   ) {}
 
   async getAll() {
-    let artists = await this.favArtists.find();
-    let albums = await this.favAlbums.find();
-    let tracks = await this.favTracks.find();
+    const artists = await this.favArtists.find();
+    const albums = await this.favAlbums.find();
+    const tracks = await this.favTracks.find();
 
     return {
       artists,
@@ -38,20 +38,20 @@ export class FavoritesService {
   }
 
   async addTrackToFavs(id: string) {
-    let track = await this.trackService.getById(id, true);
-    let trackToFavs = this.favTracks.create(track);
+    const track = await this.trackService.getById(id, true);
+    const trackToFavs = this.favTracks.create(track);
     return await this.favTracks.save(trackToFavs);
   }
 
   async addAlbumToFavs(id: string) {
-    let album = await this.albumsService.getById(id, true);
-    let albumToFavs = this.favAlbums.create(album);
+    const album = await this.albumsService.getById(id, true);
+    const albumToFavs = this.favAlbums.create(album);
     return await this.favAlbums.save(albumToFavs);
   }
 
   async addArtistToFavs(id: string) {
-    let artist = await this.artistService.getById(id, true);
-    let artistToFavs = this.favArtists.create(artist);
+    const artist = await this.artistService.getById(id, true);
+    const artistToFavs = this.favArtists.create(artist);
     return await this.favArtists.save(artistToFavs);
   }
 

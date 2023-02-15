@@ -9,17 +9,13 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  Res,
-  UseFilters,
   UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto.ts';
 import { UsersService } from './users.service';
 
-import { Response } from 'express';
 import { UserEntity } from './entity/user.entity';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
-import { clearConfigCache } from 'prettier';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -41,7 +37,7 @@ export class UsersController {
   @Post()
   async createUser(@Body() dto: CreateUserDto) {
     const user = await this.userService.create(dto);
-    let serializeUser = new UserEntity(user);
+    const serializeUser = new UserEntity(user);
     return serializeUser;
   }
 
