@@ -1,7 +1,13 @@
-FROM node:18-alpine3.17
-WORKDIR /usr/app
+FROM node:18-alpine AS builder 
+WORKDIR /usr/app/
 COPY package*.json .
+COPY tsconfig*.json .
 RUN npm install
+RUN npm cache clean --force
+WORKDIR /usr/app/foo
 COPY . .
-EXPOSE 4000
-CMD [ "npm", "run", "start:dev" ]
+
+FROM node:18-alpine
+COPY --from=builder /usr/app/foo ./app
+
+WORKDIR /app
