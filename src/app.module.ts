@@ -15,11 +15,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-
-        // for local machine
         // host: 'localhost',
-
-        // for docker container
         host: configService.get('DB_HOST'),
         port: +configService.get<number>('POSTGRES_PORT'),
         username: configService.get('POSTGRES_USER'),
