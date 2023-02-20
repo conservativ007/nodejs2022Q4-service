@@ -2,6 +2,7 @@ version: '3'
 services:
   node:
     build: .
+    image: conservativ/nodejs2022q4-service-api
     depends_on:
       - postgres
     command: npm run nodemon
@@ -17,6 +18,7 @@ services:
   postgres:
     restart: always
     build: ./database/
+    image: conservativ/nodejs2022q4-service-postgres
 
     # create volumes it save our data
     volumes:
