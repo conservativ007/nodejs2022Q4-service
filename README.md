@@ -28,9 +28,9 @@ npm install
 npm run docker:build
 ```
 
-```
+<!-- ```
 npm run start
-```
+``` -->
 
 After starting the app on port (4000 as default) you can open in your browser OpenAPI documentation by typing http://localhost:4000/api/.
 
@@ -38,7 +38,13 @@ After starting the app on port (4000 as default) you can open in your browser Op
 
 After application running open new terminal and enter:
 
-To run all the tests
+First of all you must run migrations use the follow command
+
+```
+typeorm:run-migrations
+```
+
+After that you can use all the tests
 
 ```
 npm run test

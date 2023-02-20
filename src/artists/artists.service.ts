@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FavoritesArtistsEntity } from 'src/favorites/entity/favoriteArtist.entity';
-import { TracksService } from 'src/tracks/tracks.service';
+import { FavoritesArtistsEntity } from '../favorites/entity/favoriteArtist.entity';
+import { TracksService } from '../tracks/tracks.service';
 import { Repository } from 'typeorm';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';

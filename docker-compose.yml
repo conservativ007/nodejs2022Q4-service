@@ -4,17 +4,16 @@ services:
     build: .
     depends_on:
       - postgres
+    command: npm run nodemon
+    restart: always
+
     ports:
       - ${PORT}:${PORT}
     environment:
       - ${PORT}
-
-    restart: always
-
     volumes:
       - ./src:/usr/app/src
 
-    command: npm run start:dev
   postgres:
     restart: always
     build: ./database/

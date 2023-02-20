@@ -20,7 +20,11 @@
     "test:auth": "cross-env TEST_MODE=auth jest --config ./test/jest-e2e.json",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "typeorm": "ts-node ./node_modules/typeorm/cli",
+    "typeorm:run-migrations": "npm run typeorm migration:run -- -d ./typeOrm.config.ts",
+    "typeorm:create-migration": "npm run typeorm -- migration:create ./migrations/$npm_config_name",
+    "typeorm:revert-migration": "npm run typeorm -- -d ./typeOrm.config.ts migration:revert"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -62,6 +66,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.2.5",
+    "nodemon": "^2.0.20",
     "prettier": "^2.3.2",
     "source-map-support": "^0.5.20",
     "supertest": "^6.2.3",

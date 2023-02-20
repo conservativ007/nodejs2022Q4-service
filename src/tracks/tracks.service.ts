@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FavoritesTracksEntity } from 'src/favorites/entity/favoritesTracks.entity';
+import { FavoritesTracksEntity } from '../favorites/entity/favoritesTracks.entity';
 import { Repository } from 'typeorm';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';

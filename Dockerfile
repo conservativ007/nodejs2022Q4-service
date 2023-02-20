@@ -1,13 +1,14 @@
-FROM node:18-alpine AS builder 
+FROM node:18-alpine 
+# FROM node:18-alpine AS builder 
 WORKDIR /usr/app/
 COPY package*.json .
 COPY tsconfig*.json .
 RUN npm install
-RUN npm cache clean --force
-WORKDIR /usr/app/foo
+# RUN npm cache clean --force
+# WORKDIR /usr/app/foo
 COPY . .
 
-FROM node:18-alpine
-COPY --from=builder /usr/app/foo ./app
+# FROM node:18-alpine
+# COPY --from=builder /usr/app/foo ./app
 
-WORKDIR /app
+# WORKDIR /app

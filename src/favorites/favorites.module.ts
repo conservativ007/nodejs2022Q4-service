@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AlbumsModule } from 'src/albums/albums.module';
-import { ArtistsModule } from 'src/artists/artists.module';
-import { TracksModule } from 'src/tracks/tracks.module';
+import { AlbumsModule } from '../albums/albums.module';
+import { ArtistsModule } from '../artists/artists.module';
+import { TracksModule } from '../tracks/tracks.module';
 import { FavoritesArtistsEntity } from './entity/favoriteArtist.entity';
 import { FavoritesAlbumsEntity } from './entity/favoritesAlbum.entity';
 import { FavoritesTracksEntity } from './entity/favoritesTracks.entity';
