@@ -41,7 +41,7 @@ After application running open new terminal and enter:
 First of all you must run migrations use the follow command
 
 ```
-typeorm:run-migrations
+npm run typeorm:run-migrations
 ```
 
 After that you can use all the tests
