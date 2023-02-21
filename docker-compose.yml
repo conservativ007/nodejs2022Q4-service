@@ -5,15 +5,18 @@ services:
     image: conservativ/nodejs2022q4-service-api
     depends_on:
       - postgres
-    command: npm run nodemon
+    # command: npm run nodemon
+    command: >
+      sh -c "npm run nodemon &&
+             npm run typeorm:run-migrations"
     restart: always
-
     ports:
       - ${PORT}:${PORT}
     environment:
       - ${PORT}
     volumes:
       - ./src:/usr/app/src
+      - /usr/app/node_modules
 
   postgres:
     restart: always
@@ -23,6 +26,7 @@ services:
     # create volumes it save our data
     volumes:
       - nodejs-service:/data/db
+      - DATA:/var/lib/postgresql/data
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     environment:
@@ -33,3 +37,8 @@ services:
 # our data will be available outside
 volumes:
   nodejs-service:
+  DATA:
+
+networks:
+  default:
+    driver: bridge
