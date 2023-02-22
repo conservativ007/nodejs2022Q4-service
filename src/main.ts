@@ -5,12 +5,15 @@ import { ValidationPipe } from '@nestjs/common';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { SwaggerModule } from '@nestjs/swagger';
+import { MyLogger } from './logger/MyLogger';
 
 dotenv.config();
 const PORT = process.env.PORT || 4000;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: false,
+  });
 
   // in this place we validete incoming body
   app.useGlobalPipes(
@@ -26,6 +29,7 @@ async function bootstrap() {
 
   SwaggerModule.setup('api', app, correctedOpenApi);
 
+  app.useLogger(new MyLogger());
   await app.listen(PORT);
   console.log(`Server is listening on PORT ${PORT}`);
 }

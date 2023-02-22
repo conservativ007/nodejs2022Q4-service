@@ -5,10 +5,10 @@ services:
     image: conservativ/nodejs2022q4-service-api
     depends_on:
       - postgres
-    # command: npm run nodemon
-    command: >
-      sh -c "npm run nodemon &&
-             npm run typeorm:run-migrations"
+    command: npm run nodemon
+    # command: >
+    #   sh -c "npm run nodemon &&
+    #          npm run typeorm:run-migrations"
     restart: always
     ports:
       - ${PORT}:${PORT}

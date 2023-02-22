@@ -29,6 +29,7 @@ export class UsersController {
 
   @Get(':id')
   @HttpCode(200)
+  // async getUserById(@Param('id') id: string) {
   async getUserById(@Param('id', ParseUUIDPipe) id: string) {
     const user = await this.userService.getById(id);
     return new UserEntity(user);

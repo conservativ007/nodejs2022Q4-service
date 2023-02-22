@@ -1,5 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MyLogger } from 'src/logger/MyLogger';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto.ts';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
@@ -7,12 +8,20 @@ import { UserEntity } from './entity/user.entity';
 
 @Injectable()
 export class UsersService {
+  // logger: Logger;
+
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
-  ) {}
+  ) // private myLogger: MyLogger,
+  {
+    // this.myLogger.setContext('UserService');
+    // this.logger = new Logger(UsersService.name);
+  }
 
   getAll(): Promise<UserEntity[]> {
+    // this.myLogger.warn('About to return MY users');
+    // this.logger.log('from get all users');
     return this.userRepository.find();
   }
 
