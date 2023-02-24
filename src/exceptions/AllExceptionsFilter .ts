@@ -37,6 +37,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
     //   exception as HttpException
     // ).getResponse() as HttpExceptionResponse;
 
+    console.log('from all exception filter');
+
+    process.on('uncaughtException', (err, source) => {
+      console.log('from uncaughtException');
+      console.log(err);
+      console.log(source);
+    });
+
     // const { url, query, body } = request;
 
     const responseBody = {

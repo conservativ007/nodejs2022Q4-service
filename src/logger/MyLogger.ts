@@ -1,11 +1,6 @@
-import {
-  Injectable,
-  Scope,
-  ConsoleLogger,
-  LoggerService,
-} from '@nestjs/common';
-import { createWriteStream, WriteStream } from 'fs';
-import { stdin, stdout } from 'process';
+import { Injectable, Scope, LoggerService } from '@nestjs/common';
+import { createWriteStream, WriteStream, stat } from 'fs';
+import { cwd, stdout } from 'process';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class MyLogger implements LoggerService {
@@ -33,15 +28,16 @@ export class MyLogger implements LoggerService {
    * Write a 'log' level log.
    */
   log(message: string, ...optionalParams: any[]) {
-    // console.log(optionalParams);
-    this.testFunc(message, optionalParams[0]);
+    this.writeLog(message, optionalParams[0]);
   }
 
   /**
    * Write an 'error' level log.
    */
   error(message: any, ...optionalParams: any[]) {
-    stdout.write('this error log');
+    let addMessage = 'Error: ' + message;
+    this.writeLog(addMessage, optionalParams[0], true);
+    // console.log(message);
   }
 
   /**
@@ -52,11 +48,33 @@ export class MyLogger implements LoggerService {
     console.log(message);
   }
 
-  testFunc(message: string, service: string) {
+  writeLog(message: string, service: string, error = false) {
     let date = new Date().toISOString().split('T')[1];
     stdout.write(`${date} ${service} ${message} \n`);
-    this.fileToLog.write(`${date} ${message} \n`);
+
+    if (error === false) {
+      this.fileToLog.write(`${date} ${message} \n`);
+      return;
+    }
+
+    this.fileToErrorLog.write(`${date} ${message} \n`);
+
+    // this.checkSizeFileLog();
   }
+
+  // in this place should implemented: Logs files are rotated with size.
+  // checkSizeFileLog() {
+  //   let maxSizeOfFileLog = process.env.LOG_FILE_SIZE;
+
+  //   const pathToFolderLog = cwd() + '/logs/';
+
+  //   let test = stat(pathToFolderLog + 'error-log.log', (err, stats) => {
+  //     // console.log(cwd() + '/logs/error-log.log');
+  //     if (err) console.log(err);
+  //     console.log('file size: ', maxSizeOfFileLog);
+  //     console.log(stats);
+  //   });
+  // }
 
   /**
    * Write a 'debug' level log.

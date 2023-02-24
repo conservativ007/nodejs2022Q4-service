@@ -12,9 +12,8 @@ export class UsersService {
 
   constructor(
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
-  ) // private myLogger: MyLogger,
-  {
+    private userRepository: Repository<UserEntity>, // private myLogger: MyLogger,
+  ) {
     // this.myLogger.setContext('UserService');
     // this.logger = new Logger(UsersService.name);
   }
@@ -38,6 +37,8 @@ export class UsersService {
   }
 
   async getById(id: string): Promise<UserEntity> {
+    throw new Error('Oops!');
+    // Promise.reject('Invalid password').catch((err) => console.error(err));
     try {
       const user = await this.userRepository.findOneOrFail({ where: { id } });
       return user;

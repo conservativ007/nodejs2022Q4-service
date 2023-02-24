@@ -26,11 +26,11 @@ import { LoggerMiddleware } from './logger/LoggerMiddleware';
   controllers: [AppController],
   providers: [
     AppService,
-    // {
-    //   provide: APP_FILTER,
-    //   // useClass: HttpExceptionFilter,
-    //   useClass: AllExceptionsFilter,
-    // },
+    {
+      provide: APP_FILTER,
+      // useClass: HttpExceptionFilter,
+      useClass: AllExceptionsFilter,
+    },
   ],
 })
 export class AppModule implements NestModule {
