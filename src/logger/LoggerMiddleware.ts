@@ -16,7 +16,9 @@ export class LoggerMiddleware implements NestMiddleware {
       const { statusCode } = response;
 
       if (statusCode > 399 && statusCode < 500) {
-        this.logger.error(`The exception was found, status code ${statusCode}`);
+        this.logger.error(
+          `method: ${method}, url: ${originalUrl}, code: ${statusCode}, params: ${serializedParams}, body: ${serializedBody}`,
+        );
         return;
       }
 

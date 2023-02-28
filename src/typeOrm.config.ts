@@ -1,14 +1,15 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
-import { AlbumEntity } from './src/albums/entity/album.entity';
-import { ArtistEntity } from './src/artists/entity/artist.entity';
-import { FavoritesArtistsEntity } from './src/favorites/entity/favoriteArtist.entity';
-import { FavoritesAlbumsEntity } from './src/favorites/entity/favoritesAlbum.entity';
-import { FavoritesTracksEntity } from './src/favorites/entity/favoritesTracks.entity';
-import { TrackEntity } from './src/tracks/entity/track.entity';
-import { UserEntity } from './src/users/entity/user.entity';
-import { migrateFile1676882237703 } from './migrations/1676882237703-migrateFile';
+import { AlbumEntity } from './albums/entity/album.entity';
+import { ArtistEntity } from './artists/entity/artist.entity';
+import { FavoritesArtistsEntity } from './favorites/entity/favoriteArtist.entity';
+import { FavoritesAlbumsEntity } from './favorites/entity/favoritesAlbum.entity';
+import { FavoritesTracksEntity } from './favorites/entity/favoritesTracks.entity';
+import { TrackEntity } from './tracks/entity/track.entity';
+import { UserEntity } from './users/entity/user.entity';
+import { migrateFile1676882237703 } from '../migrations/1676882237703-migrateFile';
+import { AuthEntity } from 'src/auth/entity/auth.entity';
 
 config();
 
@@ -31,6 +32,7 @@ export const newOrmConfig: DataSourceOptions = {
     FavoritesTracksEntity,
     TrackEntity,
     UserEntity,
+    AuthEntity,
   ],
   migrations: [migrateFile1676882237703],
 };

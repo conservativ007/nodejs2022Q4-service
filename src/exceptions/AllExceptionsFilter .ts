@@ -10,10 +10,6 @@ import { HttpAdapterHost } from '@nestjs/core';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  // private logger = new CustomLogger(
-  //   ['log', 'debag', 'error', 'verbose', 'warn'].slice(0, +process.env.NEST_LOGGER_LEVEL)
-  // )
-
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
@@ -26,9 +22,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     // console.log('from all exception filter');
     // console.log(exception);
-    // const { url, body } = request;
 
-    const httpStatus =
+    let httpStatus =
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
@@ -38,6 +33,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // ).getResponse() as HttpExceptionResponse;
 
     console.log('from all exception filter');
+
+    const message = exception['response']?.message || '';
+    if (message.includes('refreshToken must be a jwt string')) {
+      httpStatus = 401;
+    }
 
     process.on('uncaughtException', (err, source) => {
       console.log('from uncaughtException');
@@ -51,6 +51,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       statusCode: httpStatus,
       timestamp: new Date().toISOString(),
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
+      message,
     };
 
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
