@@ -1,8 +1,12 @@
-import { request } from './lib';
+import { request } from '../lib';
 import { StatusCodes } from 'http-status-codes';
-import { albumsRoutes, artistsRoutes, tracksRoutes } from './endpoints';
+import { albumsRoutes, artistsRoutes, tracksRoutes } from '../endpoints';
 import { validate } from 'uuid';
-import { getTokenAndUserId, shouldAuthorizationBeTested, removeTokenUser } from './utils';
+import {
+  getTokenAndUserId,
+  shouldAuthorizationBeTested,
+  removeTokenUser,
+} from '../utils';
 
 const createAlbumDto = {
   name: 'TEST_ALBUM',

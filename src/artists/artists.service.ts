@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { ArtistEntity } from './entity/artist.entity';
+import { AlbumsService } from 'src/albums/albums.service';
 
 @Injectable()
 export class ArtistsService {
@@ -17,6 +18,7 @@ export class ArtistsService {
     private favArtist: Repository<FavoritesArtistsEntity>,
 
     private trackService: TracksService,
+    private albumService: AlbumsService,
   ) {}
 
   async getAll(): Promise<ArtistEntity[]> {
@@ -78,5 +80,13 @@ export class ArtistsService {
     }
 
     await this.favArtist.delete(id);
+
+    const albums = await this.albumService.getAll();
+    const album = albums.find((album) => album.artistId === id);
+
+    if (album) {
+      album.artistId = null;
+      await this.albumService.update(album.id, album);
+    }
   }
 }

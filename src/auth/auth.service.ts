@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { Tokens, UserPayload } from './types';
 import { JwtService } from '@nestjs/jwt';
@@ -6,6 +11,7 @@ import { verify } from 'jsonwebtoken';
 import 'dotenv/config';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto.ts';
+import { StatusCodes } from 'http-status-codes';
 
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 export const JWT_SECRET_REFRESH_KEY = process.env.JWT_SECRET_REFRESH_KEY;
@@ -35,8 +41,8 @@ export class AuthService {
       ),
     ]);
     return {
-      access_token: at,
-      refresh_token: rt,
+      accessToken: at,
+      refreshToken: rt,
     };
   }
 
@@ -48,7 +54,7 @@ export class AuthService {
     let user = await this.userService.getByLogin(dto.login, dto.password);
 
     const tokens = await this.getTokens(user.id, user.login);
-    await this.userService.updateRtHash(user.id, tokens.refresh_token);
+    await this.userService.updateRtHash(user.id, tokens.refreshToken);
     return tokens;
   }
 
@@ -67,7 +73,17 @@ export class AuthService {
     if (!rtCompare) throw new ForbiddenException('bcrypt compare fails');
 
     const tokens = await this.getTokens(user.id, user.login);
-    await this.userService.updateRtHash(user.id, tokens.refresh_token);
+    await this.userService.updateRtHash(user.id, tokens.refreshToken);
     return tokens;
+  }
+
+  async verifyAccessToken(token: string) {
+    try {
+      return await this.jwtService.verify(token, {
+        secret: JWT_SECRET_REFRESH_KEY,
+      });
+    } catch (error) {
+      throw new HttpException('UNAUTHORIZED', HttpStatus.UNAUTHORIZED);
+    }
   }
 }

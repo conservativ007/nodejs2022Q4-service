@@ -9,12 +9,11 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { newOrmConfig } from './typeOrm.config';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { AllExceptionsFilter } from './exceptions/AllExceptionsFilter ';
+// import { AllExceptionsFilter } from './exceptions/AllExceptionsFilter ';
 import { MiddlewareConsumer } from '@nestjs/common/interfaces/middleware/middleware-consumer.interface';
 import { LoggerMiddleware } from './logger/LoggerMiddleware';
 import { AuthModule } from './auth/auth.module';
 import { AtGuard } from './auth/common/guards';
-import { HashModule } from './hash/hash.module';
 
 @Module({
   imports: [
@@ -25,7 +24,6 @@ import { HashModule } from './hash/hash.module';
     ArtistsModule,
     FavoritesModule,
     AuthModule,
-    // HashModule,
   ],
   controllers: [AppController],
   providers: [
@@ -40,8 +38,10 @@ import { HashModule } from './hash/hash.module';
     },
   ],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}
+
+// export class AppModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer.apply(LoggerMiddleware).forRoutes('*');
+//   }
+// }
