@@ -13,7 +13,7 @@ export class AuthController {
   @Public()
   @Post('signup')
   async singup(@Body() dto: AuthDto) {
-    await this.authService.singup(dto);
+    return await this.authService.singup(dto);
   }
 
   @HttpCode(200)
@@ -25,7 +25,7 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('refresh')
-  async refresh(@Body() dto: TokenDto) {
+  async refresh(@Body() dto: TokenDto): Promise<Tokens> {
     return await this.authService.refresh(dto.refreshToken);
   }
 }

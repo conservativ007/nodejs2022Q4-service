@@ -34,16 +34,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     console.log('from all exception filter');
 
-    const message = exception['response']?.message || '';
-    if (message.includes('refreshToken must be a jwt string')) {
-      httpStatus = 401;
-    }
-
-    process.on('uncaughtException', (err, source) => {
-      console.log('from uncaughtException');
-      console.log(err);
-      console.log(source);
-    });
+    // process.on('uncaughtException', (err, source) => {
+    //   console.log('from uncaughtException');
+    //   console.log(err);
+    //   console.log(source);
+    // });
 
     // const { url, query, body } = request;
 
@@ -51,7 +46,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
       statusCode: httpStatus,
       timestamp: new Date().toISOString(),
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
-      message,
     };
 
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);

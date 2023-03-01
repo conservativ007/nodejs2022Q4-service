@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 4000;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: false,
+    // logger: false,
   });
 
   // in this place we validete incoming body
@@ -29,7 +29,7 @@ async function bootstrap() {
 
   SwaggerModule.setup('api', app, correctedOpenApi);
 
-  app.useLogger(new MyLogger());
+  // app.useLogger(new MyLogger());
   await app.listen(PORT);
   console.log(`Server is listening on PORT ${PORT}`);
 }

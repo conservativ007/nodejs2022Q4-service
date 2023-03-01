@@ -13,6 +13,9 @@ export class UserEntity {
   @Exclude()
   password: string;
 
+  @Column({ nullable: true })
+  hashedRt: string;
+
   @Column()
   version: number;
 

@@ -8,8 +8,8 @@ import { FavoritesAlbumsEntity } from './favorites/entity/favoritesAlbum.entity'
 import { FavoritesTracksEntity } from './favorites/entity/favoritesTracks.entity';
 import { TrackEntity } from './tracks/entity/track.entity';
 import { UserEntity } from './users/entity/user.entity';
-import { migrateFile1676882237703 } from '../migrations/1676882237703-migrateFile';
-import { AuthEntity } from 'src/auth/entity/auth.entity';
+import { NewMigration1677666165482 } from '../migrations/NewMigration1677666165482';
+import { AuthEntity } from './auth/entity/auth.entity';
 
 config();
 
@@ -34,7 +34,7 @@ export const newOrmConfig: DataSourceOptions = {
     UserEntity,
     AuthEntity,
   ],
-  migrations: [migrateFile1676882237703],
+  migrations: [NewMigration1677666165482],
 };
 
 // needs to migration actions

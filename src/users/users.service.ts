@@ -5,6 +5,8 @@ import { CreateUserDto } from './dto/create-user.dto.ts';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UserEntity } from './entity/user.entity';
 
+import * as bcrypt from 'bcrypt';
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -12,13 +14,37 @@ export class UsersService {
     private userRepository: Repository<UserEntity>, // private myLogger: MyLogger,
   ) {}
 
+  async hashData(data: string) {
+    return bcrypt.hash(data, 10);
+  }
+
+  async updateRtHash(userId: string, rt: string) {
+    const hashedRefreshToken = await this.hashData(rt);
+
+    let foundUser = await this.userRepository.findOneBy({
+      id: userId,
+    });
+
+    if (foundUser === null) {
+      throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    await this.userRepository.save({
+      ...foundUser,
+      hashedRt: hashedRefreshToken,
+    });
+  }
+
   getAll(): Promise<UserEntity[]> {
     return this.userRepository.find();
   }
 
-  async create(dto: CreateUserDto): Promise<UserEntity> {
+  async create({ login, password }) {
+    const hashedPassword = await this.hashData(password);
+
     const user = {
-      ...dto,
+      login,
+      password: hashedPassword,
       version: 1,
       createdAt: Number(Date.now()),
       updatedAt: Number(Date.now()),
@@ -35,6 +61,24 @@ export class UsersService {
     } catch (error) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
+  }
+
+  async getByLogin(login: string, password: string) {
+    const user = await this.userRepository.findOneBy({
+      login: login,
+    });
+
+    if (user === null) {
+      throw new HttpException('NOT_FOUND', HttpStatus.FORBIDDEN);
+    }
+
+    let isComparedPasswordsTrue = await bcrypt.compare(password, user.password);
+
+    if (isComparedPasswordsTrue === false) {
+      throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
+    }
+
+    return user;
   }
 
   async update(id: string, dto: UpdateUserPasswordDto) {
@@ -55,18 +99,27 @@ export class UsersService {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    const comparePasswords = foundUser.password === oldPassword;
-    if (comparePasswords === false) {
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    let isComparedPasswordsTrue = await bcrypt.compare(
+      oldPassword,
+      foundUser.password,
+    );
+
+    if (isComparedPasswordsTrue === false) {
+      throw new HttpException(
+        'the old password is wrong!',
+        HttpStatus.FORBIDDEN,
+      );
     }
+
+    const hashedPassword = await this.hashData(newPassword);
 
     foundUser.version = foundUser.version += 1;
     foundUser.createdAt = Number(foundUser.createdAt);
     foundUser.updatedAt = Number(new Date());
+    foundUser.password = hashedPassword;
 
     return this.userRepository.save({
       ...foundUser,
-      password: newPassword,
     });
   }
 

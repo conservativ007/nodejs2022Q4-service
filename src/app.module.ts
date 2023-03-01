@@ -14,6 +14,7 @@ import { MiddlewareConsumer } from '@nestjs/common/interfaces/middleware/middlew
 import { LoggerMiddleware } from './logger/LoggerMiddleware';
 import { AuthModule } from './auth/auth.module';
 import { AtGuard } from './auth/common/guards';
+import { HashModule } from './hash/hash.module';
 
 @Module({
   imports: [
@@ -24,14 +25,15 @@ import { AtGuard } from './auth/common/guards';
     ArtistsModule,
     FavoritesModule,
     AuthModule,
+    // HashModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_FILTER,
-      useClass: AllExceptionsFilter,
-    },
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: AllExceptionsFilter,
+    // },
     {
       provide: APP_GUARD,
       useClass: AtGuard,
