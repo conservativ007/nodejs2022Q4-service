@@ -11,7 +11,7 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>, // private myLogger: MyLogger,
+    private userRepository: Repository<UserEntity>,
   ) {}
 
   async hashData(data: string) {

@@ -80,7 +80,7 @@ export class AuthService {
   async verifyAccessToken(token: string) {
     try {
       return await this.jwtService.verify(token, {
-        secret: JWT_SECRET_REFRESH_KEY,
+        secret: JWT_SECRET_KEY,
       });
     } catch (error) {
       throw new HttpException('UNAUTHORIZED', HttpStatus.UNAUTHORIZED);

@@ -1,10 +1,12 @@
 import { Logger, Injectable } from '@nestjs/common';
 import { NestMiddleware } from '@nestjs/common/interfaces/middleware/nest-middleware.interface';
 import { Response, Request, NextFunction } from 'express';
+import { LoggerService } from './logger.service';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  private logger = new Logger('HTTP');
+  private logger = new Logger(LoggerMiddleware.name);
+  constructor(private loggerService: LoggerService) {}
 
   use(request: Request, response: Response, next: NextFunction): void {
     const { method, originalUrl, params, body } = request;
@@ -14,22 +16,28 @@ export class LoggerMiddleware implements NestMiddleware {
 
     response.on('finish', () => {
       const { statusCode } = response;
-
-      if (statusCode > 399 && statusCode < 500) {
-        this.logger.error(
-          `method: ${method}, url: ${originalUrl}, code: ${statusCode}, params: ${serializedParams}, body: ${serializedBody}`,
-        );
-        return;
-      }
-
-      if (statusCode === 500) {
-        this.logger.error(`Internal Server Error, status code ${statusCode}`);
-        return;
-      }
-
-      this.logger.log(
-        `method: ${method}, url: ${originalUrl}, code: ${statusCode}, params: ${serializedParams}, body: ${serializedBody}`,
+      let message: string = this.loggerService.customLog(
+        method,
+        originalUrl,
+        statusCode,
+        serializedParams,
+        serializedBody,
       );
+
+      if (statusCode < 400) {
+        this.logger.log(message);
+        this.loggerService.writeLog(message);
+        return;
+      }
+
+      if (statusCode < 500) {
+        this.logger.warn(message);
+        this.loggerService.writeLog(message, true);
+        return;
+      }
+
+      this.logger.error(message);
+      this.loggerService.writeLog(message, true);
     });
 
     next();

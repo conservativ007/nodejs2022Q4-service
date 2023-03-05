@@ -1,15 +1,15 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
-import { AlbumEntity } from './albums/entity/album.entity';
-import { ArtistEntity } from './artists/entity/artist.entity';
-import { FavoritesArtistsEntity } from './favorites/entity/favoriteArtist.entity';
-import { FavoritesAlbumsEntity } from './favorites/entity/favoritesAlbum.entity';
-import { FavoritesTracksEntity } from './favorites/entity/favoritesTracks.entity';
-import { TrackEntity } from './tracks/entity/track.entity';
-import { UserEntity } from './users/entity/user.entity';
-import { NewMigration1677666165482 } from '../migrations/NewMigration1677666165482';
-import { AuthEntity } from './auth/entity/auth.entity';
+import { AlbumEntity } from '../albums/entity/album.entity';
+import { ArtistEntity } from '../artists/entity/artist.entity';
+import { FavoritesArtistsEntity } from '../favorites/entity/favoriteArtist.entity';
+import { FavoritesAlbumsEntity } from '../favorites/entity/favoritesAlbum.entity';
+import { FavoritesTracksEntity } from '../favorites/entity/favoritesTracks.entity';
+import { TrackEntity } from '../tracks/entity/track.entity';
+import { UserEntity } from '../users/entity/user.entity';
+import { NewMigration1677666165482 } from '../../migrations/NewMigration1677666165482';
+import { AuthEntity } from '../auth/entity/auth.entity';
 
 config();
 
