@@ -7,7 +7,10 @@
   },
   "servers": [
     {
-      "url": "/api"
+      "url": "/auth"
+    },
+    {
+      "url": "/"
     }
   ],
   "components": {
@@ -36,10 +39,7 @@
             "example": 1655000000
           }
         },
-        "required": [
-          "id",
-          "login"
-        ]
+        "required": ["id", "login"]
       },
       "Artist": {
         "type": "object",
@@ -57,10 +57,7 @@
             "example": false
           }
         },
-        "required": [
-          "id",
-          "name"
-        ]
+        "required": ["id", "name"]
       },
       "Album": {
         "type": "object",
@@ -83,10 +80,7 @@
             "nullable": true
           }
         },
-        "required": [
-          "id",
-          "name"
-        ]
+        "required": ["id", "name"]
       },
       "Track": {
         "type": "object",
@@ -115,11 +109,7 @@
             "example": 262
           }
         },
-        "required": [
-          "id",
-          "name",
-          "duration"
-        ]
+        "required": ["id", "name", "duration"]
       },
       "Favorites": {
         "type": "object",
@@ -149,14 +139,120 @@
       "UnauthorizedError": {
         "description": "Access token is missing or invalid"
       }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
     }
   },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "paths": {
-    "/users": {
+    "/login": {
+      "post": {
+        "tags": ["Login"],
+        "security": [],
+        "summary": "Login",
+        "description": "Logins a user and returns a JWT-token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "example",
+                "properties": {
+                  "login": {
+                    "type": "string",
+                    "description": "Username"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password"
+                  }
+                },
+                "required": ["user", "login"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "JWT Token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Incorrect login or password"
+          }
+        }
+      }
+    },
+    "/signup": {
+      "post": {
+        "tags": ["Signup"],
+        "security": [],
+        "summary": "Signup",
+        "description": "Signup a user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "example",
+                "properties": {
+                  "login": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 255,
+                    "description": "Username"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "pattern": "^[a-zA-Z0-9]{3,30}",
+                    "description": "Password"
+                  }
+                },
+                "required": ["login", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful signup"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "409": {
+            "description": "Conflict. Login already exists"
+          }
+        }
+      }
+    },
+    "/user": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get all users",
         "description": "Gets all users",
         "responses": {
@@ -172,13 +268,14 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
           }
         }
       },
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Create user",
         "description": "Creates a new user",
         "requestBody": {
@@ -198,10 +295,7 @@
                     "description": "The user's password"
                   }
                 },
-                "required": [
-                  "login",
-                  "password"
-                ]
+                "required": ["login", "password"]
               }
             }
           }
@@ -219,11 +313,14 @@
           },
           "400": {
             "description": "Bad request. body does not contain required fields"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
           }
         }
       }
     },
-    "/users/{userId}": {
+    "/user/{userId}": {
       "parameters": [
         {
           "name": "userId",
@@ -235,9 +332,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get single user by id",
         "description": "Get single user by id",
         "responses": {
@@ -254,15 +349,16 @@
           "400": {
             "description": "Bad request. userId is invalid (not uuid)"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
             "description": "User not found"
           }
         }
       },
       "put": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Update a user's password",
         "description": "Updates a user's password by ID",
         "requestBody": {
@@ -282,10 +378,7 @@
                     "description": "The user's new password"
                   }
                 },
-                "required": [
-                  "oldPassword",
-                  "newPassword"
-                ]
+                "required": ["oldPassword", "newPassword"]
               }
             }
           }
@@ -327,6 +420,9 @@
           "400": {
             "description": "Bad request. userId is invalid (not uuid)"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "403": {
             "description": "oldPassowrd is wrong"
           },
@@ -336,9 +432,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Delete user",
         "description": "Deletes user by ID.",
         "responses": {
@@ -348,17 +442,18 @@
           "400": {
             "description": "Bad request. userId is invalid (not uuid)"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
             "description": "User not found"
           }
         }
       }
     },
-    "/tracks": {
+    "/track": {
       "get": {
-        "tags": [
-          "Track"
-        ],
+        "tags": ["Track"],
         "summary": "Get tracks list",
         "description": "Gets all library tracks list",
         "responses": {
@@ -374,13 +469,14 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
           }
         }
       },
       "post": {
-        "tags": [
-          "Track"
-        ],
+        "tags": ["Track"],
         "summary": "Add new track",
         "description": "Add new track information",
         "requestBody": {
@@ -406,10 +502,7 @@
                     "description": "In seconds"
                   }
                 },
-                "required": [
-                  "name",
-                  "duration"
-                ]
+                "required": ["name", "duration"]
               }
             }
           }
@@ -427,11 +520,14 @@
           },
           "400": {
             "description": "Bad request. body does not contain required fields"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
           }
         }
       }
     },
-    "/tracks/{id}": {
+    "/track/{id}": {
       "parameters": [
         {
           "name": "id",
@@ -444,9 +540,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "Track"
-        ],
+        "tags": ["Track"],
         "summary": "Get single track by id",
         "description": "Gets single track by id",
         "responses": {
@@ -463,15 +557,16 @@
           "400": {
             "description": "Bad request. trackId is invalid (not uuid)"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
             "description": "Track was not found."
           }
         }
       },
       "put": {
-        "tags": [
-          "Track"
-        ],
+        "tags": ["Track"],
         "summary": "Update track information",
         "description": "Update library track information by UUID",
         "requestBody": {
@@ -502,10 +597,7 @@
                     "nullable": true
                   }
                 },
-                "required": [
-                  "name",
-                  "duration"
-                ]
+                "required": ["name", "duration"]
               }
             }
           }
@@ -550,15 +642,16 @@
           "400": {
             "description": "Bad request. trackId is invalid (not uuid)"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
             "description": "Track was not found."
           }
         }
       },
       "delete": {
-        "tags": [
-          "Track"
-        ],
+        "tags": ["Track"],
         "summary": "Delete track",
         "description": "Delete track from library",
         "responses": {
@@ -568,17 +661,18 @@
           "400": {
             "description": "Bad request. trackId is invalid (not uuid)"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
             "description": "Track was not found."
           }
         }
       }
     },
-    "/albums": {
+    "/album": {
       "get": {
-        "tags": [
-          "Album"
-        ],
+        "tags": ["Album"],
         "summary": "Get albums list",
         "description": "Gets all library alibums list",
         "responses": {
@@ -594,13 +688,14 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
           }
         }
       },
       "post": {
-        "tags": [
-          "Album"
-        ],
+        "tags": ["Album"],
         "summary": "Add new album",
         "description": "Add new album information",
         "requestBody": {
@@ -623,10 +718,7 @@
                     "nullable": true
                   }
                 },
-                "required": [
-                  "name",
-                  "year"
-                ]
+                "required": ["name", "year"]
               }
             }
           }
@@ -644,11 +736,14 @@
           },
           "400": {
             "description": "Bad request. body does not contain required fields"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
           }
         }
       }
     },
-    "/albums/{id}": {
+    "/album/{id}": {
       "parameters": [
         {
           "name": "id",
@@ -661,9 +756,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "Album"
-        ],
+        "tags": ["Album"],
         "summary": "Get single album by id",
         "description": "Gets single album by id",
         "responses": {
@@ -680,15 +773,16 @@
           "400": {
             "description": "Bad request. albumId is invalid (not uuid)"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
             "description": "Album was not found."
           }
         }
       },
       "put": {
-        "tags": [
-          "Album"
-        ],
+        "tags": ["Album"],
         "summary": "Update album information",
         "description": "Update library album information by UUID",
         "requestBody": {
@@ -711,10 +805,7 @@
                     "nullable": true
                   }
                 },
-                "required": [
-                  "name",
-                  "year"
-                ]
+                "required": ["name", "year"]
               }
             }
           }
@@ -733,15 +824,16 @@
           "400": {
             "description": "Bad request. albumId is invalid (not uuid)"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
             "description": "Album was not found."
           }
         }
       },
       "delete": {
-        "tags": [
-          "Album"
-        ],
+        "tags": ["Album"],
         "summary": "Delete album",
         "description": "Delete album from library",
         "responses": {
@@ -760,11 +852,9 @@
         }
       }
     },
-    "/artists": {
+    "/artist": {
       "get": {
-        "tags": [
-          "Artist"
-        ],
+        "tags": ["Artist"],
         "summary": "Get all artists",
         "description": "Gets all artists",
         "responses": {
@@ -780,13 +870,14 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
           }
         }
       },
       "post": {
-        "tags": [
-          "Artist"
-        ],
+        "tags": ["Artist"],
         "summary": "Add new artist",
         "description": "Add new artist",
         "requestBody": {
@@ -803,10 +894,7 @@
                     "type": "boolean"
                   }
                 },
-                "required": [
-                  "name",
-                  "grammy"
-                ]
+                "required": ["name", "grammy"]
               }
             }
           }
@@ -824,11 +912,14 @@
           },
           "400": {
             "description": "Bad request. body does not contain required fields"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
           }
         }
       }
     },
-    "/artists/{id}": {
+    "/artist/{id}": {
       "parameters": [
         {
           "name": "id",
@@ -841,9 +932,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "Artist"
-        ],
+        "tags": ["Artist"],
         "summary": "Get single artist by id",
         "description": "Get single artist by id",
         "responses": {
@@ -860,15 +949,16 @@
           "400": {
             "description": "Bad request. artistId is invalid (not uuid)"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
             "description": "Artist was not found."
           }
         }
       },
       "put": {
-        "tags": [
-          "Artist"
-        ],
+        "tags": ["Artist"],
         "summary": "Update artist information",
         "description": "Update artist information by UUID",
         "requestBody": {
@@ -885,10 +975,7 @@
                     "type": "boolean"
                   }
                 },
-                "required": [
-                  "name",
-                  "grammy"
-                ]
+                "required": ["name", "grammy"]
               }
             }
           }
@@ -907,15 +994,16 @@
           "400": {
             "description": "Bad request. artistId is invalid (not uuid)"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
             "description": "Artist was not found."
           }
         }
       },
       "delete": {
-        "tags": [
-          "Artist"
-        ],
+        "tags": ["Artist"],
         "summary": "Delete artist",
         "description": "Delete artist from library",
         "responses": {
@@ -925,6 +1013,9 @@
           "400": {
             "description": "Bad request. artistId is invalid (not uuid)"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "404": {
             "description": "Artist was not found."
           }
@@ -933,9 +1024,7 @@
     },
     "/favs": {
       "get": {
-        "tags": [
-          "Favorites"
-        ],
+        "tags": ["Favorites"],
         "summary": "Get all favorites",
         "description": "Gets all favorites movies, tracks and books",
         "responses": {
@@ -948,6 +1037,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
           }
         }
       }
@@ -965,9 +1057,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "Favorites"
-        ],
+        "tags": ["Favorites"],
         "summary": "Add track to the favorites",
         "description": "Add track to the favorites",
         "responses": {
@@ -977,15 +1067,16 @@
           "400": {
             "description": "Bad. trackId is invalid (not uuid)"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "422": {
             "description": "Track with id doesn't exist."
           }
         }
       },
       "delete": {
-        "tags": [
-          "Favorites"
-        ],
+        "tags": ["Favorites"],
         "summary": "Delete track from favorites",
         "description": "Delete track from favorites",
         "responses": {
@@ -994,6 +1085,9 @@
           },
           "400": {
             "description": "Bad. trackId is invalid (not uuid)"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
             "description": "Track was not found."
@@ -1014,9 +1108,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "Favorites"
-        ],
+        "tags": ["Favorites"],
         "summary": "Add album to the favorites",
         "description": "Add album to the favorites",
         "responses": {
@@ -1026,15 +1118,16 @@
           "400": {
             "description": "Bad. albumId is invalid (not uuid)"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "422": {
             "description": "Album with id doesn't exist."
           }
         }
       },
       "delete": {
-        "tags": [
-          "Favorites"
-        ],
+        "tags": ["Favorites"],
         "summary": "Delete album from favorites",
         "description": "Delete album from favorites",
         "responses": {
@@ -1043,6 +1136,9 @@
           },
           "400": {
             "description": "Bad. albumId is invalid (not uuid)"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
             "description": "Album was not found."
@@ -1063,9 +1159,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "Favorites"
-        ],
+        "tags": ["Favorites"],
         "summary": "Add artist to the favorites",
         "description": "Add artist to the favorites",
         "responses": {
@@ -1075,15 +1169,16 @@
           "400": {
             "description": "Bad request. artistId is invalid (not uuid)"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "422": {
             "description": "Artist with id doesn't exist."
           }
         }
       },
       "delete": {
-        "tags": [
-          "Favorites"
-        ],
+        "tags": ["Favorites"],
         "summary": "Delete artist from favorites",
         "description": "Delete artist from favorites",
         "responses": {
@@ -1092,6 +1187,9 @@
           },
           "400": {
             "description": "Bad request. artistId is invalid (not uuid)"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
             "description": "Artist was not found."
