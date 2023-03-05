@@ -6,17 +6,14 @@ services:
     depends_on:
       - postgres
     command: npm run nodemon
-    # command: >
-    #   sh -c "npm run nodemon &&
-    #          npm run typeorm:run-migrations"
     restart: always
     ports:
       - ${PORT}:${PORT}
     environment:
       - ${PORT}
     volumes:
-      - ./src:/usr/app/src
-      - /usr/app/node_modules
+      - .:/usr/app/
+      - node-modules:/usr/app/node_modules
 
   postgres:
     restart: always
@@ -38,6 +35,7 @@ services:
 volumes:
   nodejs-service:
   DATA:
+  node-modules:
 
 networks:
   default:
