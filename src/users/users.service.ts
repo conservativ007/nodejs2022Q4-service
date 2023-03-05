@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto.ts';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UserEntity } from './entity/user.entity';
-
-import * as bcrypt from 'bcrypt';
+import { compare, hash } from 'bcrypt';
+// import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -15,7 +15,7 @@ export class UsersService {
   ) {}
 
   async hashData(data: string) {
-    return bcrypt.hash(data, 10);
+    return hash(data, 10);
   }
 
   async updateRtHash(userId: string, rt: string) {
@@ -72,7 +72,7 @@ export class UsersService {
       throw new HttpException('NOT_FOUND', HttpStatus.FORBIDDEN);
     }
 
-    let isComparedPasswordsTrue = await bcrypt.compare(password, user.password);
+    let isComparedPasswordsTrue = await compare(password, user.password);
 
     if (isComparedPasswordsTrue === false) {
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
@@ -99,7 +99,7 @@ export class UsersService {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    let isComparedPasswordsTrue = await bcrypt.compare(
+    let isComparedPasswordsTrue = await compare(
       oldPassword,
       foundUser.password,
     );

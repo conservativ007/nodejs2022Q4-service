@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { ArtistEntity } from './entity/artist.entity';
-import { AlbumsService } from 'src/albums/albums.service';
+import { AlbumsService } from '../albums/albums.service';
 
 @Injectable()
 export class ArtistsService {

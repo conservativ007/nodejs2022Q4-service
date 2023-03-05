@@ -18,8 +18,8 @@ const configService = new ConfigService();
 // needs to forRoot typeOrm module
 export const newOrmConfig: DataSourceOptions = {
   type: 'postgres',
-  host: 'localhost',
-  // host: configService.get('POSTGRES_HOST'),
+  // host: 'localhost',
+  host: configService.get('POSTGRES_HOST'),
   port: configService.get('POSTGRES_PORT'),
   username: configService.get('POSTGRES_USER'),
   password: configService.get('POSTGRES_PASSWORD'),
