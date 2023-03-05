@@ -18,6 +18,7 @@ const configService = new ConfigService();
 // needs to forRoot typeOrm module
 export const newOrmConfig: DataSourceOptions = {
   type: 'postgres',
+  // for using without docker container
   // host: 'localhost',
   host: configService.get('POSTGRES_HOST'),
   port: configService.get('POSTGRES_PORT'),
